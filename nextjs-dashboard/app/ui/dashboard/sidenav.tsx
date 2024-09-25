@@ -6,25 +6,25 @@ import PingPongLogo from '../ping-pong-logo';
 
 export default function SideNav() {
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2">
+    <div className="dark:bg-slate-700 flex h-full flex-col px-3 py-4 md:px-2">
       <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40"
+        className="mb-2 flex h-20 items-end justify-center rounded-md bg-blue-600 p-4 md:h-40"
         href="/"
       >
-        <div className="w-32 text-white md:w-40">
-          <PingPongLogo />
+        <div className="text-white">
+          <PingPongLogo isSideBar={true} />
         </div>
       </Link>
-      <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
+      <div className="dark:bg-slate-700 flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinks />
-        <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
+        <div className="dark:bg-slate-700 hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
         <form
           action={async () => {
             'use server';
             await signOut();
           }}
         >
-          <button className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
+          <button className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3 dark:bg-slate-600 dark:text-white dark:hover:bg-slate-500 dark:hover:text-white">
             <PowerIcon className="w-6" />
             <div className="hidden md:block">Sign Out</div>
           </button>
