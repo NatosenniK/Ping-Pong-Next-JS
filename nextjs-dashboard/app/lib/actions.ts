@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+import bcrypt from 'bcrypt';
  
 const FormSchema = z.object({
     id: z.string(),
@@ -140,3 +141,29 @@ export async function authenticate(
       throw error;
     }
   }
+  
+export async function register(prevState: string | undefined, formData: FormData) {
+    const name = formData.get('name') as string 
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+  
+    if(email && password) {
+      // Check if user exists
+      const existingUser = await sql`SELECT * FROM users WHERE email=${email}`;
+      if (existingUser.rowCount > 0) {
+        return 'User already exists.';
+      }
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Insert new user
+      await sql`
+        INSERT INTO users (name, email, password) 
+        VALUES (${name}, ${email}, ${hashedPassword})
+      `;
+      
+      await signIn('credentials', { email, password });
+    }
+    
+}
