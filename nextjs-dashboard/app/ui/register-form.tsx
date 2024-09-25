@@ -28,7 +28,7 @@ export default function RegisterForm() {
                 Create your account
                 </h1>
                 <div className="w-full">
-                <div className='flex justify-between'>
+                <div className='flex-col flex justify-between md:flex-row'>
                     <div className="mt-4">
                         <label
                         className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-white"
@@ -68,7 +68,7 @@ export default function RegisterForm() {
                         </div>
                     </div>
                 </div>
-                <div className='flex justify-between'>
+                <div className='flex-col flex justify-between md:flex-rowflex justify-between'>
                     <div className="mt-4">
                         <label
                         className="mb-3 mt-5 block text-xs font-medium text-gray-900 dark:text-white"
