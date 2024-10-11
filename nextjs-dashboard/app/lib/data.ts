@@ -1,10 +1,10 @@
 import { sql } from '@vercel/postgres';
 import {
-  CustomerField,
+  PlayerField,
   CustomersTableType,
   InvoiceForm,
-  InvoicesTable,
   LatestInvoiceRaw,
+  MatchesTable,
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
@@ -90,53 +90,61 @@ export async function fetchCardData(): Promise<DataTypes.CardData> {
 }
 
 const ITEMS_PER_PAGE = 6;
-export async function fetchFilteredInvoices(
+export async function fetchFilteredMatches(
   query: string,
   currentPage: number,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const invoices = await sql<InvoicesTable>`
+    const matches = await sql<MatchesTable>`
       SELECT
-        invoices.id,
-        invoices.amount,
-        invoices.date,
-        invoices.status,
-        customers.name,
-        customers.email,
-        customers.image_url
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
+        matches.id,
+        matches.winner_id,
+        matches.loser_id,
+        matches.date,
+        matches.winner_points,
+        matches.loser_points,
+        winner.username AS winner_username,
+        winner.name AS winner_name,
+        winner.elo AS winner_elo,
+        loser.username AS loser_username,
+        loser.name AS loser_name,
+        loser.elo AS loser_elo
+      FROM matches
+      JOIN users AS winner ON matches.winner_id = winner.id
+      JOIN users AS loser ON matches.loser_id = loser.id
       WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
-      ORDER BY invoices.date DESC
+        winner.name ILIKE ${`%${query}%`} OR
+        winner.username ILIKE ${`%${query}%`} OR
+        loser.name ILIKE ${`%${query}%`} OR
+        loser.username ILIKE ${`%${query}%`}
+      ORDER BY matches.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
-    return invoices.rows;
+    return matches.rows;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    throw new Error('Failed to fetch matches.');
   }
 }
 
-export async function fetchInvoicesPages(query: string) {
+
+
+export async function fetchMatchesPages(query: string) {
   try {
-    const count = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
-    WHERE
-      customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
-  `;
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM matches
+      JOIN users AS winner ON matches.winner_id = winner.id
+      JOIN users AS loser ON matches.loser_id = loser.id
+      WHERE
+        winner.name ILIKE ${`%${query}%`} OR
+        winner.username ILIKE ${`%${query}%`} OR
+        loser.name ILIKE ${`%${query}%`} OR
+        loser.username ILIKE ${`%${query}%`}
+    `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
@@ -171,21 +179,21 @@ export async function fetchInvoiceById(id: string) {
   }
 }
 
-export async function fetchCustomers() {
+export async function fetchPlayers() {
   try {
-    const data = await sql<CustomerField>`
+    const data = await sql<PlayerField>`
       SELECT
         id,
-        name
-      FROM customers
-      ORDER BY name ASC
+        username
+      FROM users
+      ORDER BY username ASC
     `;
 
-    const customers = data.rows;
-    return customers;
+    const players = data.rows;
+    return players;
   } catch (err) {
     console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
+    throw new Error('Failed to fetch all players.');
   }
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { CustomerField } from '@/app/lib/definitions';
+import { PlayerField } from '@/app/lib/definitions';
 import Link from 'next/link';
 import {
   CheckIcon,
@@ -12,7 +12,7 @@ import { Button } from '@/app/ui/button';
 import { createInvoice, State } from '@/app/lib/actions';
 import { useActionState } from 'react';
 
-export default function Form({ customers }: { customers: CustomerField[] }) {
+export default function Form({ players }: { players: PlayerField[] }) {
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createInvoice, initialState);
   
@@ -20,38 +20,71 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
     <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
           {/* Customer Name */}
-          <div className="mb-4">
-        <label htmlFor="customer" className="mb-2 block text-sm font-medium">
-          Choose customer
-        </label>
-        <div className="relative">
-          <select
-            id="customer"
-            name="customerId"
-            className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-            defaultValue=""
-            aria-describedby="customer-error"
-          >
-            <option value="" disabled>
-              Select a customer
-            </option>
-            {customers.map((name) => (
-              <option key={name.id} value={name.id}>
-                {name.name}
+        <div className="mb-4">
+          <label htmlFor="winningPlayer" className="mb-2 block text-sm font-medium">
+            Winning Player
+          </label>
+          <div className="relative">
+            <select
+              id="winningPlayer"
+              name="winningPlayerId"
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+              defaultValue=""
+              aria-describedby="winningPlayer-error"
+            >
+              <option value="" disabled>
+                Select a winning player
               </option>
-            ))}
-          </select>
-          <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+              {players.map((player) => (
+                <option key={player.id} value={player.id}>
+                  {player.username}
+                </option>
+              ))}
+            </select>
+            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          <div id="customer-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.customerId &&
+              state.errors.customerId.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
         </div>
-        <div id="customer-error" aria-live="polite" aria-atomic="true">
-          {state.errors?.customerId &&
-            state.errors.customerId.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
-              </p>
-            ))}
+
+        <div className="mb-4">
+          <label htmlFor="losingPlayer" className="mb-2 block text-sm font-medium">
+            Losing Player
+          </label>
+          <div className="relative">
+            <select
+              id="losingPlayer"
+              name="losingPlayerId"
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+              defaultValue=""
+              aria-describedby="losingPlayer-error"
+            >
+              <option value="" disabled>
+                Select a losing player
+              </option>
+              {players.map((player) => (
+                <option key={player.id} value={player.id}>
+                  {player.username}
+                </option>
+              ))}
+            </select>
+            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          </div>
+          <div id="customer-error" aria-live="polite" aria-atomic="true">
+            {state.errors?.customerId &&
+              state.errors.customerId.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+          </div>
         </div>
-      </div>
 
         {/* Invoice Amount */}
         <div className="mb-4">

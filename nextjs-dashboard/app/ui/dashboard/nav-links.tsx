@@ -17,6 +17,7 @@ const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
   { name: 'Players', href: '/dashboard/players', icon: UserGroupIcon },
   { name: 'Standings', href: '/dashboard/standings', icon: ChartBarIcon },
+  { name: 'View All Matches', href: '/dashboard/matches', icon: ClipboardDocumentCheckIcon },
   { name: 'Enter Match Score', href: '/dashboard/enter-match', icon: ClipboardDocumentCheckIcon },
 ];
 
