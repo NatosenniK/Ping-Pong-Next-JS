@@ -8,6 +8,7 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { DataTypes } from './data.types';
 
 export async function fetchRevenue() {
   try {
@@ -48,34 +49,39 @@ export async function fetchLatestInvoices() {
   }
 }
 
-export async function fetchCardData() {
+export async function fetchCardData(): Promise<DataTypes.CardData> {
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
     // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
+    const playersCountPromise = sql`SELECT COUNT(*) FROM users`;
+    const matchesCountPromise = sql`SELECT COUNT(*) FROM matches`;
+    const totalPointsScoredPromise = sql`SELECT SUM(winner_points + loser_points) AS total FROM matches`;
+    const topPlayerPromise: Promise<{ rows: DataTypes.CardDataPlayerObject[] }> = sql`SELECT users.id, users.username, COUNT(matches.winner_id) AS wins
+      FROM users
+      JOIN matches ON users.id = matches.winner_id
+      GROUP BY users.id, users.username
+      ORDER BY wins DESC
+      LIMIT 1; `;
 
     const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
+      playersCountPromise,
+      matchesCountPromise,
+      totalPointsScoredPromise,
+      topPlayerPromise,
     ]);
 
-    const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
-    const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
+    
+    const numberOfPlayers = Number(data[0].rows[0].count ?? '0');
+    const numberOfMatches = Number(data[1].rows[0].count ?? '0');
+    const numberOfPoints = Number(data[2].rows[0].total ?? '0');
+    const topPlayer = data[3].rows[0];
 
     return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
+      numberOfPlayers,
+      numberOfMatches,
+      numberOfPoints,
+      topPlayer,
     };
   } catch (error) {
     console.error('Database Error:', error);

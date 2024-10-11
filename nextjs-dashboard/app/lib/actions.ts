@@ -144,6 +144,7 @@ export async function authenticate(
   
 export async function register(prevState: string | undefined, formData: FormData) {
     const name = formData.get('name') as string 
+    const username = formData.get('username') as string 
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
   
@@ -159,8 +160,8 @@ export async function register(prevState: string | undefined, formData: FormData
 
       // Insert new user
       await sql`
-        INSERT INTO users (name, email, password) 
-        VALUES (${name}, ${email}, ${hashedPassword})
+        INSERT INTO users (name, email, username, password) 
+        VALUES (${name}, ${email}, ${username}, ${hashedPassword})
       `;
       
       await signIn('credentials', { email, password });
