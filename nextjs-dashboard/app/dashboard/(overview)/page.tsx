@@ -6,6 +6,7 @@ import { fetchCardData } from '@/app/lib/data';
 import { Suspense } from 'react';
 import { CardSkeleton, LatestInvoicesSkeleton, RevenueChartSkeleton } from '@/app/ui/skeletons';
 import { Metadata } from 'next';
+import WelcomeMessage from '@/app/ui/dashboard/welcome-message';
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -23,7 +24,9 @@ export default async function Page() {
   return (
     <main>
       <h1 className={`${lusitana.className} mb-4 text-xl md:text-2xl dark:text-white`}>
-        Dashboard
+        <Suspense fallback={'Testing'}>
+          <WelcomeMessage />
+        </Suspense>
       </h1>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Suspense fallback={<CardSkeleton />}>

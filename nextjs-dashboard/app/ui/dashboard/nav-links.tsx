@@ -18,7 +18,7 @@ const links = [
   { name: 'Players', href: '/dashboard/players', icon: UserGroupIcon },
   { name: 'Standings', href: '/dashboard/standings', icon: ChartBarIcon },
   { name: 'View All Matches', href: '/dashboard/matches', icon: ClipboardDocumentCheckIcon },
-  { name: 'Enter Match Score', href: '/dashboard/enter-match', icon: ClipboardDocumentCheckIcon },
+  { name: 'Enter Match Score', href: '/dashboard/matches/create', icon: ClipboardDocumentCheckIcon },
 ];
 
 export default function NavLinks() {

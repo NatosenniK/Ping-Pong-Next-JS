@@ -2,12 +2,7 @@
 
 import { PlayerField } from '@/app/lib/definitions';
 import Link from 'next/link';
-import {
-  CheckIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  UserCircleIcon,
-} from '@heroicons/react/24/outline';
+import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
 import { createInvoice, State } from '@/app/lib/actions';
 import { useActionState } from 'react';
@@ -18,17 +13,18 @@ export default function Form({ players }: { players: PlayerField[] }) {
   
   return (
     <form action={formAction}>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
-          {/* Customer Name */}
+
+      <div className="rounded-md bg-gray-50 p-4 md:p-6 dark:bg-slate-700">
+
         <div className="mb-4">
-          <label htmlFor="winningPlayer" className="mb-2 block text-sm font-medium">
+          <label htmlFor="winningPlayer" className="mb-2 block text-sm font-medium dark:text-white">
             Winning Player
           </label>
           <div className="relative">
             <select
               id="winningPlayer"
               name="winningPlayerId"
-              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
               defaultValue=""
               aria-describedby="winningPlayer-error"
             >
@@ -41,7 +37,7 @@ export default function Form({ players }: { players: PlayerField[] }) {
                 </option>
               ))}
             </select>
-            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-white" />
           </div>
           <div id="customer-error" aria-live="polite" aria-atomic="true">
             {state.errors?.customerId &&
@@ -54,14 +50,14 @@ export default function Form({ players }: { players: PlayerField[] }) {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="losingPlayer" className="mb-2 block text-sm font-medium">
+          <label htmlFor="losingPlayer" className="mb-2 block text-sm font-medium dark:text-white">
             Losing Player
           </label>
           <div className="relative">
             <select
               id="losingPlayer"
               name="losingPlayerId"
-              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
               defaultValue=""
               aria-describedby="losingPlayer-error"
             >
@@ -74,7 +70,7 @@ export default function Form({ players }: { players: PlayerField[] }) {
                 </option>
               ))}
             </select>
-            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+            <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-white" />
           </div>
           <div id="customer-error" aria-live="polite" aria-atomic="true">
             {state.errors?.customerId &&
@@ -87,7 +83,7 @@ export default function Form({ players }: { players: PlayerField[] }) {
         </div>
 
         {/* Invoice Amount */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label htmlFor="amount" className="mb-2 block text-sm font-medium">
             Choose an amount
           </label>
@@ -113,10 +109,10 @@ export default function Form({ players }: { players: PlayerField[] }) {
                 ))}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Invoice Status */}
-        <fieldset>
+        {/* <fieldset>
           <legend className="mb-2 block text-sm font-medium">
             Set the invoice status
           </legend>
@@ -164,7 +160,7 @@ export default function Form({ players }: { players: PlayerField[] }) {
                 </p>
               ))}
           </div>
-        </fieldset>
+        </fieldset> */}
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
