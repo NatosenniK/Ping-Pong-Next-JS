@@ -6,6 +6,7 @@ import {
   LatestInvoiceRaw,
   MatchesTable,
   Revenue,
+  PlayerStandingsTable,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { DataTypes } from './data.types';
@@ -89,7 +90,7 @@ export async function fetchCardData(): Promise<DataTypes.CardData> {
   }
 }
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 10;
 export async function fetchFilteredMatches(
   query: string,
   currentPage: number,
@@ -105,12 +106,12 @@ export async function fetchFilteredMatches(
         matches.date,
         matches.winner_points,
         matches.loser_points,
+        matches.winner_elo,
+        matches.loser_elo,
         winner.username AS winner_username,
         winner.name AS winner_name,
-        winner.elo AS winner_elo,
         loser.username AS loser_username,
-        loser.name AS loser_name,
-        loser.elo AS loser_elo
+        loser.name AS loser_name
       FROM matches
       JOIN users AS winner ON matches.winner_id = winner.id
       JOIN users AS loser ON matches.loser_id = loser.id
@@ -120,15 +121,70 @@ export async function fetchFilteredMatches(
         loser.name ILIKE ${`%${query}%`} OR
         loser.username ILIKE ${`%${query}%`}
       ORDER BY matches.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+      LIMIT ${ITEMS_PER_PAGE}
+      OFFSET ${offset}
     `;
-
+  
     return matches.rows;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch matches.');
   }
+
 }
+
+export async function fetchPlayerStandings(query: string, currentPage: number) {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const standings = await sql<PlayerStandingsTable>` 
+      SELECT
+        username,
+        SUM(wins) AS wins,
+        SUM(loss) AS losses,
+        SUM(PF) AS points_for,
+        SUM(PA) AS points_against,
+        elo
+      FROM (
+        (SELECT 
+          users.id AS user_id,
+          users.username AS username,
+          COUNT(matches.winner_id) AS wins,
+          0 AS loss,
+          SUM(matches.winner_points) AS PF,
+          SUM(matches.loser_points) AS PA,
+          users.elo AS elo
+        FROM users
+        JOIN matches ON matches.winner_id = users.id
+        GROUP BY users.id)
+        
+        UNION ALL
+
+        (SELECT 
+          users.id AS user_id,
+          users.username AS username,
+          0 AS wins,
+          COUNT(matches.loser_id) AS loss,
+          SUM(matches.loser_points) AS PF,
+          SUM(matches.winner_points) AS PA,
+          users.elo AS elo
+        FROM users
+        JOIN matches ON matches.loser_id = users.id
+        GROUP BY users.id)
+      ) AS t
+      GROUP BY username, elo
+      ORDER BY wins DESC
+      LIMIT ${ITEMS_PER_PAGE}
+      OFFSET ${offset}
+    `;
+
+    return standings.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch player standings.');
+  }
+}
+
 
 
 

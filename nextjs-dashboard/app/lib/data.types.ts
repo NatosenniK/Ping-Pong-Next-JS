@@ -13,7 +13,9 @@ export namespace DataTypes {
         winnerId: string
         loserId: string
         winnerPoints: number
+        winnerRank: number
         loserPoints: number
+        loserRank: number
     }
 
     export interface CardData {

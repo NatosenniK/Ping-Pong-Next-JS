@@ -67,6 +67,15 @@ export type MatchesTable = {
   date: string;
 };
 
+export type PlayerStandingsTable = {
+  username: string;
+  wins: number;
+  losses: number;
+  points_for: number;
+  points_against: number;
+  elo: number;  
+}
+
 export type CustomersTableType = {
   id: string;
   name: string;

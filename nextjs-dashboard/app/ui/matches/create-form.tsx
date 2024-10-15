@@ -17,6 +17,7 @@ export default function Form({ players, currentUser }: FormProps) {
   const [state, formAction] = useActionState<State, FormData>(createMatch, initialState);
   const [filteredPlayers, setFilteredPlayers] = useState<PlayerField[] | null>(null)
   const [modifiedUser, setModifiedUser] = useState<PlayerField | null>(null)
+  const [loserCurrentRank, setLoserCurrentRank] = useState<number | null>(null)
   
   useEffect(() => {
     const playersExceptCurrentUser = players.filter((player) => player.email !== currentUser.email);
@@ -44,6 +45,7 @@ export default function Form({ players, currentUser }: FormProps) {
                 aria-describedby="winningPlayer-error"
                 onChange={(e) => {
                   e.target.value = modifiedUser.id ?? '';
+                  setLoserCurrentRank(modifiedUser.elo)
                 }}
               >
                 <option value="" disabled>
@@ -98,6 +100,28 @@ export default function Form({ players, currentUser }: FormProps) {
         </div>
 
         <div className="mb-4">
+          <label htmlFor="winnerRank" className="mb-2 block text-sm font-medium dark:text-white">
+            Winner Current Rank
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="winnerRank"
+                name="winnerRank"
+                type="number"
+                step="0.01"
+                placeholder="Enter Winner Score"
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
+                aria-describedby="winnerRank-error"
+                value={modifiedUser?.elo ?? 0}
+              />
+              <AdjustmentsVerticalIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900 dark:text-white" />
+            </div>
+
+          </div>
+        </div>
+
+        <div className="mb-4">
           <label htmlFor="losingPlayer" className="mb-2 block text-sm font-medium dark:text-white">
             Losing Player
           </label>
@@ -108,6 +132,10 @@ export default function Form({ players, currentUser }: FormProps) {
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
               defaultValue=""
               aria-describedby="losingPlayer-error"
+              onChange={(e) => {
+                const losingPlayerObj = players.filter((player) => player.id == e.target.value)
+                setLoserCurrentRank(losingPlayerObj[0].elo)
+              }}
             >
               <option value="" disabled>
                 Select a losing player
@@ -155,6 +183,28 @@ export default function Form({ players, currentUser }: FormProps) {
                   </p>
                 ))}
             </div>
+          </div>
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="loserRank" className="mb-2 block text-sm font-medium dark:text-white">
+            Loser Current Rank
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="loserRank"
+                name="loserRank"
+                type="number"
+                step="0.01"
+                placeholder="Enter Winner Score"
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
+                aria-describedby="loserRank-error"
+                value={loserCurrentRank ?? 0}
+              />
+              <AdjustmentsVerticalIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900 dark:text-white" />
+            </div>
+
           </div>
         </div>
 

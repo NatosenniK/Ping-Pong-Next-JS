@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcrypt';
+import { calculateElo } from './elo';
  
 const FormSchema = z.object({
     id: z.string(),
@@ -19,7 +20,13 @@ const FormSchema = z.object({
     winnerPoints: z.coerce
       .number()
       .gt(0, { message: 'Please enter an amount greater than the losing opponent.' }),
+    winnerRank: z.coerce
+      .number()
+      .gt(0, { message: 'Please enter an amount 0 or greater.' }),
     loserPoints: z.coerce
+      .number()
+      .gt(0, { message: 'Please enter an amount 0 or greater.' }),
+    loserRank: z.coerce
       .number()
       .gt(0, { message: 'Please enter an amount 0 or greater.' }),
     date: z.string(),
@@ -38,44 +45,67 @@ export type State = {
 const CreateMatch = FormSchema.omit({ id: true, date: true });
 
 export async function createMatch(prevState: State, formData: FormData): Promise<State> {
-    // Validate form using Zod
-    const validatedFields = CreateMatch.safeParse({
-      winnerId: formData.get('winningPlayerId'),
-      loserId: formData.get('losingPlayerId'),
-      winnerPoints: formData.get('winnerPoints'),
-      loserPoints: formData.get('loserPoints'),
-    });
-  
-    // If form validation fails, return errors early. Otherwise, continue.
-    if (!validatedFields.success) {
-      return {
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: 'Missing Fields. Failed to Create Match.',
-      };
-    }
-  
-    // Prepare data for insertion into the database
-    const { winnerId, loserId, winnerPoints, loserPoints } = validatedFields.data;
-    const date = new Date().toISOString().split('T')[0];
+  // Validate form using Zod
+  const validatedFields = CreateMatch.safeParse({
+    winnerId: formData.get('winningPlayerId'),
+    loserId: formData.get('losingPlayerId'),
+    winnerPoints: formData.get('winnerPoints'),
+    winnerRank: formData.get('winnerRank'),
+    loserPoints: formData.get('loserPoints'),
+    loserRank: formData.get('loserRank')
+  });
 
-    // const {winnerNewElo, loserNewElo} = getElo()
-  
-    // Insert data into the database
-    try {
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Match.',
+    };
+  }
+
+  // Prepare data for insertion into the database
+  const { winnerId, loserId, winnerPoints, winnerRank, loserPoints, loserRank } = validatedFields.data;
+  const date = new Date().toISOString();
+
+  const { winNewElo, loseNewElo } = calculateElo(winnerRank, loserRank);
+
+  // Insert data into the database within a transaction
+  try {
+      // Start the transaction
+      await sql`BEGIN`;
+      
+      // Insert the match record
       await sql`
-        INSERT INTO matches (date, winner_id, loser_id, winner_points, loser_points)
-        VALUES (${date}, ${winnerId}, ${loserId}, ${winnerPoints}, ${loserPoints})
+          INSERT INTO matches (date, winner_id, loser_id, winner_points, loser_points, winner_elo, loser_elo)
+          VALUES (${date}, ${winnerId}, ${loserId}, ${winnerPoints}, ${loserPoints}, ${winnerRank}, ${loserRank})
       `;
-    } catch (error) {
+      
+      // Update the winner's elo
+      await sql`
+          UPDATE users SET elo = ${winNewElo} WHERE id = ${winnerId}
+      `;
+      
+      // Update the loser's elo
+      await sql`
+          UPDATE users SET elo = ${loseNewElo} WHERE id = ${loserId}
+      `;
+      
+      // Commit the transaction if all queries succeeded
+      await sql`COMMIT`;
+
+  } catch (error) {
+      // Rollback the transaction if any query failed
+      await sql`ROLLBACK`;
       return {
-        message: 'Database Error: Failed to Create Invoice.',
+          message: 'Database Error: Failed to Create Match or Update Elo Ratings.',
       };
-    }
-  
-    // If successful, revalidate and redirect
-    revalidatePath('/dashboard/matches');
-    redirect('/dashboard/matches');
+  }
+
+  // Revalidate and redirect
+  revalidatePath('/dashboard/matches');
+  redirect('/dashboard/matches');
 }
+
   
 
 // const UpdateInvoice = FormSchema.omit({ id: true, date: true });

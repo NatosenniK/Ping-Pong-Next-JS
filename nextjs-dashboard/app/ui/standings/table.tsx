@@ -1,33 +1,31 @@
-import Image from 'next/image';
-import { DeleteMatch } from '@/app/ui/invoices/buttons';
-import InvoiceStatus from '@/app/ui/invoices/status';
-import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
-import { fetchFilteredMatches } from '@/app/lib/data';
 
-export default async function InvoicesTable({
+import { DeleteMatch } from '@/app/ui/matches/buttons';
+import { formatDateToLocal } from '@/app/lib/utils';
+import { fetchFilteredMatches, fetchPlayerStandings } from '@/app/lib/data';
+
+export default async function StandingsTable({
   query,
   currentPage,
 }: {
   query: string;
   currentPage: number;
 }) {
-  const matches = await fetchFilteredMatches(query, currentPage);
+  const playerStandings = await fetchPlayerStandings(query, currentPage);
 
-  console.log(matches)
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0 dark:bg-slate-700">
           <div className="md:hidden">
-            {matches?.map((match) => (
+            {playerStandings?.map((player, index) => (
               <div
-                key={match.id}
+                key={index}
                 className="mb-2 w-full rounded-md bg-white p-4 dark:bg-slate-600 dark:text-white"
               >
                 <div className="flex items-center justify-between border-b pb-4">
                   <div className='w-full'>
-                      <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">{match.winner_username}</p><p>Score: {match.winner_points}</p></div>
-                      <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">{match.loser_username}</p><p>Score: {match.loser_points}</p></div>
+                      <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">{player.username}</p><p>Rating: {player.elo}</p></div>
+                      <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">Wins: {player.wins}</p><p>Losses: {player.losses}</p></div>
                   </div>
                   {/* <InvoiceStatus status={match.status} /> */}
                 </div>
@@ -36,11 +34,7 @@ export default async function InvoicesTable({
                     <p className="text-xl font-medium">
                       {/* {formatCurrency(match.amount)} */}
                     </p>
-                    <p>{formatDateToLocal(match.date)}</p>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    
-                    <DeleteMatch id={match.id} />
+           
                   </div>
                 </div>
               </div>
@@ -50,65 +44,54 @@ export default async function InvoicesTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
+                  Rank
                 </th>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Winner 
+                  Player 
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Winner Points For
+                  Wins
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Winner Rank
+                  Losses
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Loser
+                  Points For
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Loser Points For
+                  Points Against
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Loser Rank
-                </th>
-                <th scope="col" className="relative py-3 pl-6 pr-3">
-                  <span className="sr-only">Edit</span>
+                  Rating
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-slate-700">
-              {matches?.map((match) => (
+              {playerStandings?.map((player, index) => (
                 <tr
-                  key={match.id}
+                  key={index}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap px-3 py-3">
-                    <div className="flex items-center gap-3">
-                      {formatDateToLocal(match.date)}
-                    </div>
+                    {index + 1}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {match.winner_username}
+                    {player.username}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {match.winner_points}
+                    {player.wins}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {match.winner_elo}
+                    {player.losses}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {match.loser_username}
+                    {player.points_for}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {match.loser_points}
+                    {player.points_against}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {match.loser_elo}
-                  </td>
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex justify-end gap-3">
-                      {/* <UpdateMatch id={match.id} /> */}
-                      <DeleteMatch id={match.id} />
-                    </div>
+                    {player.elo}
                   </td>
                 </tr>
               ))}
