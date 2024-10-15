@@ -1,4 +1,4 @@
-import { deleteInvoice } from '@/app/lib/actions';
+import { deleteMatch } from '@/app/lib/actions';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
@@ -27,7 +27,7 @@ export function CreateInvoice() {
 
 export function DeleteMatch({ id }: { id: string }) {
 
-  const deleteInvoiceWithId = deleteInvoice.bind(null, id);
+  const deleteInvoiceWithId = deleteMatch.bind(null, id);
   
   return (
     <form action={deleteInvoiceWithId}>

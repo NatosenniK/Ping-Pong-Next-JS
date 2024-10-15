@@ -10,55 +10,61 @@ import bcrypt from 'bcrypt';
  
 const FormSchema = z.object({
     id: z.string(),
-    customerId: z.string({
-      invalid_type_error: 'Please select a customer.',
+    winnerId: z.string({
+      invalid_type_error: 'Please select a winning player.',
     }),
-    amount: z.coerce
+    loserId: z.string({
+      invalid_type_error: 'Please select a losing player.',
+    }),
+    winnerPoints: z.coerce
       .number()
-      .gt(0, { message: 'Please enter an amount greater than $0.' }),
-    status: z.enum(['pending', 'paid'], {
-      invalid_type_error: 'Please select an invoice status.',
-    }),
+      .gt(0, { message: 'Please enter an amount greater than the losing opponent.' }),
+    loserPoints: z.coerce
+      .number()
+      .gt(0, { message: 'Please enter an amount 0 or greater.' }),
     date: z.string(),
   });
 
 export type State = {
     errors?: {
-      customerId?: string[];
-      amount?: string[];
-      status?: string[];
+      winnerId?: string[];
+      loserId?: string[];
+      winnerPoints?: string[];
+      loserPoints?: string[];
     };
     message?: string | null;
 };
  
-const CreateInvoice = FormSchema.omit({ id: true, date: true });
+const CreateMatch = FormSchema.omit({ id: true, date: true });
 
-export async function createInvoice(prevState: State, formData: FormData) {
+export async function createMatch(prevState: State, formData: FormData): Promise<State> {
     // Validate form using Zod
-    const validatedFields = CreateInvoice.safeParse({
-      customerId: formData.get('customerId'),
-      amount: formData.get('amount'),
-      status: formData.get('status'),
+    const validatedFields = CreateMatch.safeParse({
+      winnerId: formData.get('winningPlayerId'),
+      loserId: formData.get('losingPlayerId'),
+      winnerPoints: formData.get('winnerPoints'),
+      loserPoints: formData.get('loserPoints'),
     });
   
     // If form validation fails, return errors early. Otherwise, continue.
     if (!validatedFields.success) {
       return {
         errors: validatedFields.error.flatten().fieldErrors,
-        message: 'Missing Fields. Failed to Create Invoice.',
+        message: 'Missing Fields. Failed to Create Match.',
       };
     }
   
     // Prepare data for insertion into the database
-    const { customerId, amount, status } = validatedFields.data;
-    const amountInCents = amount * 100;
+    const { winnerId, loserId, winnerPoints, loserPoints } = validatedFields.data;
     const date = new Date().toISOString().split('T')[0];
+
+    // const {winnerNewElo, loserNewElo} = getElo()
   
     // Insert data into the database
     try {
       await sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+        INSERT INTO matches (date, winner_id, loser_id, winner_points, loser_points)
+        VALUES (${date}, ${winnerId}, ${loserId}, ${winnerPoints}, ${loserPoints})
       `;
     } catch (error) {
       return {
@@ -67,57 +73,57 @@ export async function createInvoice(prevState: State, formData: FormData) {
     }
   
     // If successful, revalidate and redirect
-    revalidatePath('/dashboard/invoices');
-    redirect('/dashboard/invoices');
+    revalidatePath('/dashboard/matches');
+    redirect('/dashboard/matches');
 }
   
 
-const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+// const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
-export async function updateInvoice(
-    id: string,
-    prevState: State,
-    formData: FormData,
-  ) {
-    const validatedFields = UpdateInvoice.safeParse({
-      customerId: formData.get('customerId'),
-      amount: formData.get('amount'),
-      status: formData.get('status'),
-    });
+// export async function updateInvoice(
+//     id: string,
+//     prevState: State,
+//     formData: FormData,
+//   ) {
+//     const validatedFields = UpdateInvoice.safeParse({
+//       customerId: formData.get('customerId'),
+//       amount: formData.get('amount'),
+//       status: formData.get('status'),
+//     });
    
-    if (!validatedFields.success) {
-      return {
-        errors: validatedFields.error.flatten().fieldErrors,
-        message: 'Missing Fields. Failed to Update Invoice.',
-      };
-    }
+//     if (!validatedFields.success) {
+//       return {
+//         errors: validatedFields.error.flatten().fieldErrors,
+//         message: 'Missing Fields. Failed to Update Invoice.',
+//       };
+//     }
    
-    const { customerId, amount, status } = validatedFields.data;
-    const amountInCents = amount * 100;
+//     const { customerId, amount, status } = validatedFields.data;
+//     const amountInCents = amount * 100;
    
+//     try {
+//       await sql`
+//         UPDATE invoices
+//         SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+//         WHERE id = ${id}
+//       `;
+//     } catch (error) {
+//       return { message: 'Database Error: Failed to Update Invoice.' };
+//     }
+   
+//     revalidatePath('/dashboard/invoices');
+//     redirect('/dashboard/invoices');
+// }
+
+export async function deleteMatch(id: string) {
+
     try {
-      await sql`
-        UPDATE invoices
-        SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-        WHERE id = ${id}
-      `;
-    } catch (error) {
-      return { message: 'Database Error: Failed to Update Invoice.' };
-    }
-   
-    revalidatePath('/dashboard/invoices');
-    redirect('/dashboard/invoices');
-}
-
-export async function deleteInvoice(id: string) {
-
-    try {
-        await sql`DELETE FROM invoices WHERE id = ${id}`;
-        revalidatePath('/dashboard/invoices');
-    return { message: 'Deleted Invoice' };
+        await sql`DELETE FROM matches WHERE id = ${id}`;
+        revalidatePath('/dashboard/matches');
+    return { message: 'Deleted Match' };
     } catch(error) {
         return {
-            message: 'Database Error: Failed to Delete Invoice.'
+            message: 'Database Error: Failed to Delete Match.'
         };
     }
    

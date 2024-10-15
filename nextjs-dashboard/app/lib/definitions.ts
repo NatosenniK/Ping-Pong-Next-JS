@@ -9,6 +9,15 @@ export type User = {
   password: string;
 };
 
+export type UserObject = {
+  id: string;
+  password: string;
+  name: string;
+  email: string;
+  username: string;
+  elo: number
+};
+
 export type Customer = {
   id: string;
   name: string;
@@ -81,6 +90,8 @@ export type FormattedCustomersTable = {
 export type PlayerField = {
   id: string;
   username: string;
+  email: string;
+  elo: number
 };
 
 export type InvoiceForm = {

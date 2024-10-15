@@ -184,7 +184,9 @@ export async function fetchPlayers() {
     const data = await sql<PlayerField>`
       SELECT
         id,
-        username
+        username,
+        email,
+        elo
       FROM users
       ORDER BY username ASC
     `;
