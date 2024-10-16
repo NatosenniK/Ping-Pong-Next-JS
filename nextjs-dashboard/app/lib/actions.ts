@@ -120,6 +120,21 @@ export async function deleteMatch(id: string) {
    
 }
 
+export async function saveProfilePhoto(email: string, profilePictureUrl: string) {
+
+  try {
+    await sql`
+      UPDATE users
+      SET profile_picture_url = ${profilePictureUrl}
+      WHERE email = ${email}
+    `;
+
+    return profilePictureUrl
+  } catch (error) {
+    console.error('Database Error:', error);
+  }
+}
+
 export async function authenticate(
     prevState: string | undefined,
     formData: FormData,

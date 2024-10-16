@@ -1,7 +1,6 @@
 
-import { DeleteMatch } from '@/app/ui/matches/buttons';
-import { formatDateToLocal } from '@/app/lib/utils';
-import { fetchFilteredMatches, fetchPlayerStandings } from '@/app/lib/data';
+import Image from 'next/image';
+import { fetchPlayerStandings } from '@/app/lib/data';
 
 export default async function StandingsTable({
   query,
@@ -77,7 +76,17 @@ export default async function StandingsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+                    {player.profile_picture_url ? (
+                        <Image
+                            src={player.profile_picture_url}
+                            className="rounded-full"
+                            alt={`${player.username}'s profile picture`}
+                            width={40}
+                            height={40}
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+                      )}
                       {player.username}
                     </div>
                   </td>

@@ -19,6 +19,7 @@ const links = [
   { name: 'Standings', href: '/dashboard/standings', icon: ChartBarIcon },
   { name: 'View All Matches', href: '/dashboard/matches', icon: ClipboardDocumentCheckIcon },
   { name: 'Enter Match Score', href: '/dashboard/matches/create', icon: ClipboardDocumentCheckIcon },
+  { name: 'Photo Upload', href: '/dashboard/upload-test', icon: ClipboardDocumentCheckIcon },
 ];
 
 export default function NavLinks() {

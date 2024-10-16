@@ -140,6 +140,7 @@ export async function fetchPlayerStandings(query: string, currentPage: number) {
     const standings = await sql<PlayerStandingsTable>` 
       SELECT
         username,
+        profile_picture_url,
         SUM(wins) AS wins,
         SUM(loss) AS losses,
         SUM(PF) AS points_for,
@@ -148,6 +149,7 @@ export async function fetchPlayerStandings(query: string, currentPage: number) {
       FROM (
         (SELECT 
           users.id AS user_id,
+          users.profile_picture_url as profile_picture_url,
           users.username AS username,
           COUNT(matches.winner_id) AS wins,
           0 AS loss,
@@ -162,6 +164,7 @@ export async function fetchPlayerStandings(query: string, currentPage: number) {
 
         (SELECT 
           users.id AS user_id,
+          users.profile_picture_url as profile_picture_url,
           users.username AS username,
           0 AS wins,
           COUNT(matches.loser_id) AS loss,
@@ -172,7 +175,7 @@ export async function fetchPlayerStandings(query: string, currentPage: number) {
         JOIN matches ON matches.loser_id = users.id
         GROUP BY users.id)
       ) AS t
-      GROUP BY username, elo
+      GROUP BY username, elo, profile_picture_url
       ORDER BY wins DESC
       LIMIT ${ITEMS_PER_PAGE}
       OFFSET ${offset}
@@ -216,6 +219,7 @@ export async function fetchPlayerById(id: string) {
       SELECT
         username,
         id,
+        profile_picture_url,
         SUM(wins) AS wins,
         SUM(loss) AS losses,
         SUM(PF) AS points_for,
@@ -225,6 +229,7 @@ export async function fetchPlayerById(id: string) {
         (SELECT 
           users.id AS id,
           users.username AS username,
+          users.profile_picture_url as profile_picture_url,
           COUNT(matches.winner_id) AS wins,
           0 AS loss,
           SUM(matches.winner_points) AS PF,
@@ -239,6 +244,7 @@ export async function fetchPlayerById(id: string) {
         (SELECT 
           users.id AS id,
           users.username AS username,
+          users.profile_picture_url as profile_picture_url,
           0 AS wins,
           COUNT(matches.loser_id) AS loss,
           SUM(matches.loser_points) AS PF,
@@ -250,7 +256,7 @@ export async function fetchPlayerById(id: string) {
       ) AS t
       WHERE
 		  id = ${id}
-      GROUP BY username, elo, id
+      GROUP BY username, elo, id, profile_picture_url
       ORDER BY username DESC
     `;
 
@@ -307,6 +313,7 @@ export async function fetchPlayerList(query: string, currentPage: number) {
       SELECT
         username,
         id,
+        profile_picture_url,
         SUM(wins) AS wins,
         SUM(loss) AS losses,
         SUM(PF) AS points_for,
@@ -316,6 +323,7 @@ export async function fetchPlayerList(query: string, currentPage: number) {
         (SELECT 
           users.id AS id,
           users.username AS username,
+          users.profile_picture_url as profile_picture_url,
           COUNT(matches.winner_id) AS wins,
           0 AS loss,
           SUM(matches.winner_points) AS PF,
@@ -330,6 +338,7 @@ export async function fetchPlayerList(query: string, currentPage: number) {
         (SELECT 
           users.id AS id,
           users.username AS username,
+          users.profile_picture_url as profile_picture_url,
           0 AS wins,
           COUNT(matches.loser_id) AS loss,
           SUM(matches.loser_points) AS PF,
@@ -341,7 +350,7 @@ export async function fetchPlayerList(query: string, currentPage: number) {
       ) AS t
       WHERE
 		  username ILIKE ${`%${query}%`}
-      GROUP BY username, elo, id
+      GROUP BY username, elo, id, profile_picture_url
       ORDER BY username DESC
       LIMIT ${ITEMS_PER_PAGE}
       OFFSET ${offset}
@@ -355,35 +364,3 @@ export async function fetchPlayerList(query: string, currentPage: number) {
   }
 }
 
-export async function fetchFilteredCustomers(query: string) {
-  try {
-    const data = await sql<CustomersTableType>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
-	  `;
-
-    const customers = data.rows.map((customer) => ({
-      ...customer,
-      total_pending: formatCurrency(customer.total_pending),
-      total_paid: formatCurrency(customer.total_paid),
-    }));
-
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch customer table.');
-  }
-}
