@@ -114,6 +114,7 @@ export default function Form({ players, currentUser }: FormProps) {
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
                 aria-describedby="winnerRank-error"
                 value={modifiedUser?.elo ?? 0}
+                readOnly
               />
               <AdjustmentsVerticalIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900 dark:text-white" />
             </div>
@@ -169,7 +170,7 @@ export default function Form({ players, currentUser }: FormProps) {
                 name="loserPoints"
                 type="number"
                 step="0.01"
-                placeholder="Enter Winner Score"
+                placeholder="Enter Loser Score"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
                 aria-describedby="loserPoints-error"
               />
@@ -201,6 +202,7 @@ export default function Form({ players, currentUser }: FormProps) {
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
                 aria-describedby="loserRank-error"
                 value={loserCurrentRank ?? 0}
+                readOnly
               />
               <AdjustmentsVerticalIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900 dark:text-white" />
             </div>
