@@ -69,6 +69,7 @@ export type MatchesTable = {
 
 export type PlayerStandingsTable = {
   username: string;
+  id: string;
   wins: number;
   losses: number;
   points_for: number;

@@ -2,7 +2,7 @@ import { deleteMatch } from '@/app/lib/actions';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
-export function CreateInvoice() {
+export function CreateMatch() {
   return (
     <Link
       href="/dashboard/matches/create"

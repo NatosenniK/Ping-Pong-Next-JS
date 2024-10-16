@@ -76,7 +76,10 @@ export default async function StandingsTable({
                     {index + 1}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {player.username}
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+                      {player.username}
+                    </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {player.wins}

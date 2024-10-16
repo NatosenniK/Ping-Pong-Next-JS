@@ -139,24 +139,193 @@ export function TableRowSkeleton() {
   );
 }
 
-export function InvoicesMobileSkeleton() {
+export function PlayerRowSkeleton() {
   return (
-    <div className="mb-2 w-full rounded-md bg-white p-4">
+    <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg dark:bg-slate-700">
+      {/* Customer Name and Image */}
+      <td className="relative overflow-hidden whitespace-nowrap py-3 pl-3 pr-3">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+          <div className="h-6 w-32 rounded bg-gray-100 dark:bg-slate-600"></div>
+        </div>
+      </td>
+      {/* Email */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Amount */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Date */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Status */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Skill rating */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-20 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Actions */}
+      <td className="whitespace-nowrap py-3 pl-6 pr-3">
+        <div className="flex justify-end gap-3">
+          <div className="h-[38px] w-[38px] rounded bg-gray-100 dark:bg-slate-600"></div>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+export function StandingRowSkeleton() {
+  return (
+    <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg dark:bg-slate-700">
+      
+      {/* Position */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-12 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Player Name and Image */}
+      <td className="relative overflow-hidden whitespace-nowrap py-3 pl-3 pr-3">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+          <div className="h-6 w-32 rounded bg-gray-100 dark:bg-slate-600"></div>
+        </div>
+      </td>
+      {/* Wins */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Losses */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Points For */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Points Against */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Rating */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-20 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+    </tr>
+  );
+}
+
+export function MatchRowSkeleton() {
+  return (
+    <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg dark:bg-slate-700">
+      
+      {/* Date */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-20 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Winner Name */}
+      <td className="relative overflow-hidden whitespace-nowrap py-3 pl-3 pr-3">
+        <div className="h-6 w-28 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Winner Points For */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-8 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Winner Rank */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Loser */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-28 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Loser Points For */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-8 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+      {/* Loser Rank */}
+      <td className="whitespace-nowrap px-3 py-3">
+        <div className="h-6 w-20 rounded bg-gray-100 dark:bg-slate-600"></div>
+      </td>
+    </tr>
+  );
+}
+
+
+export function GenericMobileSkeleton() {
+  return (
+    <div className="mb-2 w-full rounded-md bg-white p-4 dark:bg-slate-700">
       <div className="flex items-center justify-between border-b border-gray-100 pb-8">
         <div className="flex items-center">
-          <div className="mr-2 h-8 w-8 rounded-full bg-gray-100"></div>
-          <div className="h-6 w-16 rounded bg-gray-100"></div>
+          <div className="mr-2 h-8 w-8 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+          <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
         </div>
-        <div className="h-6 w-16 rounded bg-gray-100"></div>
+        <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
       </div>
       <div className="flex w-full items-center justify-between pt-4">
         <div>
-          <div className="h-6 w-16 rounded bg-gray-100"></div>
-          <div className="mt-2 h-6 w-24 rounded bg-gray-100"></div>
+          <div className="h-6 w-16 rounded bg-gray-100 dark:bg-slate-600"></div>
+          <div className="mt-2 h-6 w-24 rounded bg-gray-100 dark:bg-slate-600"></div>
         </div>
         <div className="flex justify-end gap-2">
-          <div className="h-10 w-10 rounded bg-gray-100"></div>
-          <div className="h-10 w-10 rounded bg-gray-100"></div>
+          <div className="h-10 w-10 rounded bg-gray-100 dark:bg-slate-600"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function StandingsTableSkeleton() {
+  return (
+    <div className="mt-6 flow-root">
+      <div className="inline-block min-w-full align-middle">
+        <div className="rounded-lg bg-gray-50 p-2 md:pt-0 dark:bg-slate-700">
+          <div className="md:hidden">
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+          </div>
+          <table className="hidden min-w-full text-gray-900 md:table ">
+            <thead className="rounded-lg text-left text-sm font-normal dark:text-white">
+            <tr>
+              <th scope="col" className="px-3 py-5 font-medium">
+                  Rank
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Player
+                </th>
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                  Wins 
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Losses
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Points For
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Points Against
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Rating
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              <StandingRowSkeleton />
+              <StandingRowSkeleton />
+              <StandingRowSkeleton />
+              <StandingRowSkeleton />
+              <StandingRowSkeleton />
+              <StandingRowSkeleton />
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -167,48 +336,102 @@ export function MatchesTableSkeleton() {
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
+        <div className="rounded-lg bg-gray-50 p-2 md:pt-0 dark:bg-slate-700">
           <div className="md:hidden">
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
-            <InvoicesMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
           </div>
-          <table className="hidden min-w-full text-gray-900 md:table">
-            <thead className="rounded-lg text-left text-sm font-normal">
-              <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Customer
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Email
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
+          <table className="hidden min-w-full text-gray-900 md:table ">
+            <thead className="rounded-lg text-left text-sm font-normal dark:text-white">
+            <tr>
+              <th scope="col" className="px-3 py-5 font-medium">
                   Date
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Status
+                  Winner
                 </th>
-                <th
-                  scope="col"
-                  className="relative pb-4 pl-3 pr-6 pt-2 sm:pr-6"
-                >
-                  <span className="sr-only">Edit</span>
+                <th scope="col" className="px-4 py-5 font-medium">
+                  Winner Points For 
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Winner Rank
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Loser
+                </th>
+                <th scope="col" className="px-4 py-5 font-medium">
+                  Loser Points For 
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Loser Rank
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white">
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
-              <TableRowSkeleton />
+              <MatchRowSkeleton />
+              <MatchRowSkeleton />
+              <MatchRowSkeleton />
+              <MatchRowSkeleton />
+              <MatchRowSkeleton />
+              <MatchRowSkeleton />
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function PlayersTableSkeleton() {
+  return (
+    <div className="mt-6 flow-root">
+      <div className="inline-block min-w-full align-middle">
+        <div className="rounded-lg bg-gray-50 p-2 md:pt-0 dark:bg-slate-700">
+          <div className="md:hidden">
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+            <GenericMobileSkeleton />
+          </div>
+          <table className="hidden min-w-full text-gray-900 md:table ">
+            <thead className="rounded-lg text-left text-sm font-normal dark:text-white">
+            <tr>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Username
+                </th>
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                  Wins 
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Losses
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Points For
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Points Against
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Skill Rating
+                </th>
+                <th scope="col" className="relative py-3 pl-6 pr-3">
+                  <span className="sr-only">View</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              <PlayerRowSkeleton />
+              <PlayerRowSkeleton />
+              <PlayerRowSkeleton />
+              <PlayerRowSkeleton />
+              <PlayerRowSkeleton />
+              <PlayerRowSkeleton />
             </tbody>
           </table>
         </div>

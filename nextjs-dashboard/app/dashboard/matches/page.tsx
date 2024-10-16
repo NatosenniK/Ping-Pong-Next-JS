@@ -1,7 +1,7 @@
-import Pagination from '@/app/ui/matches/pagination';
+import Pagination from '@/app/ui/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/matches/table';
-import { CreateInvoice } from '@/app/ui/matches/buttons';
+import { CreateMatch } from '@/app/ui/matches/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { MatchesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
@@ -31,7 +31,7 @@ export default async function Page({
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search matches..." />
-        <CreateInvoice />
+        <CreateMatch />
       </div>
        <Suspense key={query + currentPage} fallback={<MatchesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />

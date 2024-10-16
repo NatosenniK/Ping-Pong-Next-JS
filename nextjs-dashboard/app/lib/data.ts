@@ -210,28 +210,72 @@ export async function fetchMatchesPages(query: string) {
   }
 }
 
-export async function fetchInvoiceById(id: string) {
+export async function fetchPlayerById(id: string) {
   try {
-    const data = await sql<InvoiceForm>`
+    const player = await sql<PlayerStandingsTable>` 
       SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
-      FROM invoices
-      WHERE invoices.id = ${id};
+        username,
+        id,
+        SUM(wins) AS wins,
+        SUM(loss) AS losses,
+        SUM(PF) AS points_for,
+        SUM(PA) AS points_against,
+        elo
+      FROM (
+        (SELECT 
+          users.id AS id,
+          users.username AS username,
+          COUNT(matches.winner_id) AS wins,
+          0 AS loss,
+          SUM(matches.winner_points) AS PF,
+          SUM(matches.loser_points) AS PA,
+          users.elo AS elo
+        FROM users
+        JOIN matches ON matches.winner_id = users.id
+        GROUP BY users.id)
+        
+        UNION ALL
+
+        (SELECT 
+          users.id AS id,
+          users.username AS username,
+          0 AS wins,
+          COUNT(matches.loser_id) AS loss,
+          SUM(matches.loser_points) AS PF,
+          SUM(matches.winner_points) AS PA,
+          users.elo AS elo
+        FROM users
+        JOIN matches ON matches.loser_id = users.id
+        GROUP BY users.id)
+      ) AS t
+      WHERE
+		  id = ${id}
+      GROUP BY username, elo, id
+      ORDER BY username DESC
     `;
 
-    const invoice = data.rows.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
 
-    return invoice[0];
+    return player.rows[0];
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
+    throw new Error('Failed to fetch player.');
+  }
+}
+
+export async function fetchPlayersPages(query: string) {
+  try {
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM users
+      WHERE
+        users.username ILIKE ${`%${query}%`}
+    `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of invoices.');
   }
 }
 
@@ -252,6 +296,62 @@ export async function fetchPlayers() {
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch all players.');
+  }
+}
+
+export async function fetchPlayerList(query: string, currentPage: number) {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const standings = await sql<PlayerStandingsTable>` 
+      SELECT
+        username,
+        id,
+        SUM(wins) AS wins,
+        SUM(loss) AS losses,
+        SUM(PF) AS points_for,
+        SUM(PA) AS points_against,
+        elo
+      FROM (
+        (SELECT 
+          users.id AS id,
+          users.username AS username,
+          COUNT(matches.winner_id) AS wins,
+          0 AS loss,
+          SUM(matches.winner_points) AS PF,
+          SUM(matches.loser_points) AS PA,
+          users.elo AS elo
+        FROM users
+        JOIN matches ON matches.winner_id = users.id
+        GROUP BY users.id)
+        
+        UNION ALL
+
+        (SELECT 
+          users.id AS id,
+          users.username AS username,
+          0 AS wins,
+          COUNT(matches.loser_id) AS loss,
+          SUM(matches.loser_points) AS PF,
+          SUM(matches.winner_points) AS PA,
+          users.elo AS elo
+        FROM users
+        JOIN matches ON matches.loser_id = users.id
+        GROUP BY users.id)
+      ) AS t
+      WHERE
+		  username ILIKE ${`%${query}%`}
+      GROUP BY username, elo, id
+      ORDER BY username DESC
+      LIMIT ${ITEMS_PER_PAGE}
+      OFFSET ${offset}
+      
+    `;
+
+    return standings.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch player standings.');
   }
 }
 
