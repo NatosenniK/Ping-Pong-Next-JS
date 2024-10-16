@@ -22,11 +22,13 @@
 //   await client.sql`
 //     CREATE TABLE IF NOT EXISTS matches (
 //       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-//       date DATE NOT NULL,
+//       date TIMESTAMPTZ NOT NULL,
 //       winner_id UUID REFERENCES users(id) ON DELETE CASCADE,
 //       loser_id UUID REFERENCES users(id) ON DELETE CASCADE,
 //       winner_points INT NOT NULL,
-//       loser_points INT NOT NULL
+//       loser_points INT NOT NULL,
+//       winner_elo INT NOT NULL,
+//       loser_elo INT NOT NULL
 //     );
 //   `;
 // }
