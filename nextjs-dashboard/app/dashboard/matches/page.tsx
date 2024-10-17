@@ -6,7 +6,7 @@ import { MatchesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchMatchesPages } from '@/app/lib/data';
 import { Metadata } from 'next';
-import MatchesTable from '@/app/ui/standings/standings-table';
+import MatchesTable from '@/app/ui/matches/matches-table';
 
 export const metadata: Metadata = {
   title: 'Matches',

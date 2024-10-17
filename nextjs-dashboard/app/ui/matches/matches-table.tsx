@@ -1,7 +1,5 @@
-import Image from 'next/image';
 import { DeleteMatch } from '@/app/ui/matches/buttons';
-import InvoiceStatus from '@/app/ui/matches/status';
-import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
+import { formatDateToLocal } from '@/app/lib/utils';
 import { fetchFilteredMatches } from '@/app/lib/data';
 
 export default async function MatchesTable({
@@ -28,12 +26,11 @@ export default async function MatchesTable({
                       <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">{match.winner_username}</p><p>Score: {match.winner_points}</p></div>
                       <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">{match.loser_username}</p><p>Score: {match.loser_points}</p></div>
                   </div>
-                  {/* <InvoiceStatus status={match.status} /> */}
+        
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {/* {formatCurrency(match.amount)} */}
                     </p>
                     <p>{formatDateToLocal(match.date)}</p>
                   </div>
