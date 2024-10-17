@@ -6,7 +6,7 @@ export async function POST(request: Request) {
   const { filename, contentType } = await request.json()
 
   try {
-    const client = new S3Client({ region: process.env.AWS_REGION })
+    const client = new S3Client({ region: process.env.AWS_REGION });
 
     const bucketName = process.env.AWS_BUCKET_NAME;
     if (!bucketName) {
