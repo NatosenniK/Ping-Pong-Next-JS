@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: '%s | Ping Pong Ranking',
     default: 'Ping Pong Ranking',
   },
-  description: 'The official Next.js Learn Dashboard built with App Router.',
+  description: 'Log and track ping pong matches with your friends. View recent matches and rankings.',
   metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
 };
 
