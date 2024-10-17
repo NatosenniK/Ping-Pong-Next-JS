@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { fetchPlayerList } from '@/app/lib/data';
 import { ViewPlayer } from './buttons';
 import { PingPongImage } from '../ping-pong-image';
+import Link from 'next/link';
 
 export default async function PlayersTable({
   query,
@@ -78,18 +79,20 @@ export default async function PlayersTable({
                 >
                   <td className="whitespace-nowrap px-3 py-3">
                     
-                    <div className="flex items-center gap-3">
-                      {player.profile_picture_url ? (
-                        <PingPongImage
-                          imageUrl={player.profile_picture_url}
-                          width={40}
-                          height={40}
-                          className='bg-center rounded-full'
-                        />
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-slate-600"></div>
-                      )}
-                      {player.username}
+                    <div>
+                      <Link href={`/dashboard/players/${player.id}/view`} className='flex items-center gap-3'>
+                        {player.profile_picture_url ? (
+                          <PingPongImage
+                            imageUrl={player.profile_picture_url}
+                            width={40}
+                            height={40}
+                            className='bg-center rounded-full'
+                          />
+                          ) : (
+                            <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+                        )}
+                        {player.username}
+                      </Link>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">

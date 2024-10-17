@@ -8,6 +8,7 @@ import { Suspense } from 'react';
 import { fetchPlayersPages } from '@/app/lib/data';
 import { Metadata } from 'next';
 import Pagination from '@/app/ui/pagination';
+import StandingsTable from '@/app/ui/standings/standings-table';
 
 export const metadata: Metadata = {
   title: 'Standings',
@@ -31,7 +32,7 @@ export default async function Page({
         <h1 className={`${lusitana.className} text-2xl dark:text-white`}>Standings</h1>
       </div>
        <Suspense key={query + currentPage} fallback={<StandingsTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} />
+        <StandingsTable currentPage={currentPage} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

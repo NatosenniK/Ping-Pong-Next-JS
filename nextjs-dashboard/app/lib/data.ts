@@ -132,7 +132,7 @@ export async function fetchFilteredMatches(
 
 }
 
-export async function fetchPlayerStandings(query: string, currentPage: number) {
+export async function fetchPlayerStandings( currentPage: number) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -140,6 +140,7 @@ export async function fetchPlayerStandings(query: string, currentPage: number) {
       SELECT
         username,
         profile_picture_url,
+        id,
         SUM(wins) AS wins,
         SUM(loss) AS losses,
         SUM(PF) AS points_for,
@@ -147,7 +148,7 @@ export async function fetchPlayerStandings(query: string, currentPage: number) {
         elo
       FROM (
         (SELECT 
-          users.id AS user_id,
+          users.id AS id,
           users.profile_picture_url as profile_picture_url,
           users.username AS username,
           COUNT(matches.winner_id) AS wins,
@@ -162,7 +163,7 @@ export async function fetchPlayerStandings(query: string, currentPage: number) {
         UNION ALL
 
         (SELECT 
-          users.id AS user_id,
+          users.id AS id,
           users.profile_picture_url as profile_picture_url,
           users.username AS username,
           0 AS wins,
@@ -174,12 +175,12 @@ export async function fetchPlayerStandings(query: string, currentPage: number) {
         JOIN matches ON matches.loser_id = users.id
         GROUP BY users.id)
       ) AS t
-      GROUP BY username, elo, profile_picture_url
+      GROUP BY username, elo, profile_picture_url, id
       ORDER BY wins DESC
       LIMIT ${ITEMS_PER_PAGE}
       OFFSET ${offset}
     `;
-
+    
     return standings.rows;
   } catch (error) {
     console.error('Database Error:', error);
