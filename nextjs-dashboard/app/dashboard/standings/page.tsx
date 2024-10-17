@@ -1,6 +1,6 @@
 
 import Search from '@/app/ui/search';
-import Table from '@/app/ui/standings/table';
+import Table from '@/app/ui/standings/standings-table';
 import { CreateMatch } from '@/app/ui/matches/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { StandingsTableSkeleton } from '@/app/ui/skeletons';

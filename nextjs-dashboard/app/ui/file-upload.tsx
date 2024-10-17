@@ -56,8 +56,6 @@ export default function FileUpload({ currentUser }: FormProps) {
         await saveProfilePhoto(currentUser.email, fileUrl)
       }
 
-      console.log(uploadResponse)
-
       if (uploadResponse.ok) {
         alert('Upload successful! ')
       } else {

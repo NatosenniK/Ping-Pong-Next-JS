@@ -1,52 +1,51 @@
 import { sql } from '@vercel/postgres';
 import {
   PlayerField,
-  CustomersTableType,
-  InvoiceForm,
-  LatestInvoiceRaw,
   MatchesTable,
-  Revenue,
   PlayerStandingsTable,
 } from './definitions';
-import { formatCurrency } from './utils';
 import { DataTypes } from './data.types';
 
-export async function fetchRevenue() {
+export async function fetchMatches() {
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
-
-    // console.log('Data fetch completed after 3 seconds.');
+    const data = await sql<MatchesTable>`SELECT * FROM matches`;
 
     return data.rows;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    throw new Error('Failed to fetch match data.');
   }
 }
 
-export async function fetchLatestInvoices() {
+export async function fetchLatestMatches() {
   try {
-    const data = await sql<LatestInvoiceRaw>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
+    const data = await sql<MatchesTable>`
+      SELECT
+        matches.id,
+        matches.winner_id,
+        matches.loser_id,
+        matches.date,
+        matches.winner_points,
+        matches.loser_points,
+        matches.winner_elo,
+        matches.loser_elo,
+        winner.username AS winner_username,
+        winner.name AS winner_name,
+        winner.profile_picture_url AS winner_profile_picture_url,
+        loser.username AS loser_username,
+        loser.name AS loser_name,
+        loser.profile_picture_url AS loser_profile_picture_url
+      FROM matches
+      JOIN users AS winner ON matches.winner_id = winner.id
+      JOIN users AS loser ON matches.loser_id = loser.id
+      ORDER BY matches.date DESC
       LIMIT 5`;
 
-    const latestInvoices = data.rows.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
-    return latestInvoices;
+    return data.rows;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    throw new Error('Failed to fetch the latest matches.');
   }
 }
 
@@ -209,7 +208,7 @@ export async function fetchMatchesPages(query: string) {
     return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
+    throw new Error('Failed to fetch total number of matches.');
   }
 }
 
@@ -281,7 +280,7 @@ export async function fetchPlayersPages(query: string) {
     return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
+    throw new Error('Failed to fetch total number of Players.');
   }
 }
 

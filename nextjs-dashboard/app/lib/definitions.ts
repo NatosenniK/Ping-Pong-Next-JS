@@ -18,54 +18,24 @@ export type UserObject = {
   elo: number
 };
 
-export type Customer = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-};
-
-export type Invoice = {
-  id: string;
-  customer_id: string;
-  amount: number;
-  date: string;
-  // In TypeScript, this is called a string union type.
-  // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
-  status: 'pending' | 'paid';
-};
-
-export type Revenue = {
-  month: string;
-  revenue: number;
-};
-
-export type LatestInvoice = {
-  id: string;
-  name: string;
-  image_url: string;
-  email: string;
-  amount: string;
-};
-
-// The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
-  amount: number;
-};
-
 export type MatchesTable = {
   id: string;
-  winner_id: string;
-  winner_points: number;
-  loser_id: string
-  loser_points: number;
-  name: string;
-  winner_username: string;
-  winner_elo: number
-  loser_username: string;
-  loser_elo: number
   date: string;
+  winner_id: string;
+  winner_username: string;
+  winner_points: number;
+  winner_profile_picture_url: string
+  winner_elo: number
+  loser_id: string
+  loser_username: string;
+  loser_points: number;
+  loser_profile_picture_url: string
+  loser_elo: number
 };
+
+export interface GroupedMatch extends MatchesTable {
+  totalGames: number;
+}
 
 export type PlayerStandingsTable = {
   username: string;
@@ -78,36 +48,9 @@ export type PlayerStandingsTable = {
   elo: number;  
 }
 
-export type CustomersTableType = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  total_invoices: number;
-  total_pending: number;
-  total_paid: number;
-};
-
-export type FormattedCustomersTable = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  total_invoices: number;
-  total_pending: string;
-  total_paid: string;
-};
-
 export type PlayerField = {
   id: string;
   username: string;
   email: string;
   elo: number
-};
-
-export type InvoiceForm = {
-  id: string;
-  customer_id: string;
-  amount: number;
-  status: 'pending' | 'paid';
 };

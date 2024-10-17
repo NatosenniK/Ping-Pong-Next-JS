@@ -1,4 +1,4 @@
-import { Revenue } from './definitions';
+import { GroupedMatch } from './definitions';
 
 export const formatCurrency = (amount: number) => {
   return (amount / 100).toLocaleString('en-US', {
@@ -21,19 +21,24 @@ export const formatDateToLocal = (
   return formatter.format(date);
 };
 
-export const generateYAxis = (revenue: Revenue[]) => {
-  // Calculate what labels we need to display on the y-axis
-  // based on highest record and in 1000s
+export const generateYAxis = (matches: GroupedMatch[]) => {
   const yAxisLabels = [];
-  const highestRecord = Math.max(...revenue.map((month) => month.revenue));
-  const topLabel = Math.ceil(highestRecord / 1000) * 1000;
+  
+  // Find the highest number of games in a day
+  const highestRecord = Math.max(...matches.map((match) => match.totalGames));
+  
+  // Round up to the nearest multiple of 5 for better scaling on the Y-axis
+  const topLabel = Math.ceil(highestRecord / 5) * 5;
 
-  for (let i = topLabel; i >= 0; i -= 1000) {
-    yAxisLabels.push(`$${i / 1000}K`);
+  // Generate Y-axis labels, evenly spaced between 0 and topLabel
+  for (let i = topLabel; i >= 0; i -= Math.ceil(topLabel / 4)) {
+    yAxisLabels.push(`${i}`);
   }
 
   return { yAxisLabels, topLabel };
 };
+
+
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
   // If the total number of pages is 7 or less,

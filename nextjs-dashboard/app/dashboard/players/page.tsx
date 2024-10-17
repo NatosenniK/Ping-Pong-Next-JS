@@ -1,11 +1,11 @@
 import Pagination from '@/app/ui/pagination';
 import Search from '@/app/ui/search';
-import Table from '@/app/ui/players/table';
 import { lusitana } from '@/app/ui/fonts';
 import { PlayersTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchPlayersPages } from '@/app/lib/data';
 import { Metadata } from 'next';
+import PlayersTable from '@/app/ui/players/players-table';
 
 export const metadata: Metadata = {
   title: 'Players',
@@ -33,7 +33,7 @@ export default async function Page({
         <Search placeholder="Search players..." />
       </div>
        <Suspense key={query + currentPage} fallback={<PlayersTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} />
+        <PlayersTable query={query} currentPage={currentPage} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />

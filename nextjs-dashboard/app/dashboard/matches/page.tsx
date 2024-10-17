@@ -1,12 +1,12 @@
 import Pagination from '@/app/ui/pagination';
 import Search from '@/app/ui/search';
-import Table from '@/app/ui/matches/table';
 import { CreateMatch } from '@/app/ui/matches/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { MatchesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchMatchesPages } from '@/app/lib/data';
 import { Metadata } from 'next';
+import MatchesTable from '@/app/ui/standings/standings-table';
 
 export const metadata: Metadata = {
   title: 'Matches',
@@ -34,7 +34,7 @@ export default async function Page({
         <CreateMatch />
       </div>
        <Suspense key={query + currentPage} fallback={<MatchesTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} />
+        <MatchesTable query={query} currentPage={currentPage} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
