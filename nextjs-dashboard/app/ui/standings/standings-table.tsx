@@ -21,20 +21,13 @@ export default async function StandingsTable({
                 key={index}
                 className="mb-2 w-full rounded-md bg-white p-4 dark:bg-slate-600 dark:text-white"
               >
-                <div className="flex items-center justify-between border-b pb-4">
+                <div className="flex items-center justify-between">
+                  <div className='mr-4'>{index + 1}</div>
                   <div className='w-full'>
-                      <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">{player.username}</p><p>Rating: {player.elo}</p></div>
-                      <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">Wins: {player.wins}</p><p>Losses: {player.losses}</p></div>
+                      <div className='flex justify-between items-center'><p className="text-gray-500 dark:text-white pb-2 font-bold">{player.username}</p><p className='text-sm'>Rating: {player.elo}</p></div>
+                      <div className='flex justify-between items-center'><p className="text-gray-500 dark:text-white pb-2">Record: </p><p>{player.wins} - {player.losses}</p></div>
                   </div>
-                  {/* <InvoiceStatus status={match.status} /> */}
-                </div>
-                <div className="flex w-full items-center justify-between pt-4">
-                  <div>
-                    <p className="text-xl font-medium">
-                      {/* {formatCurrency(match.amount)} */}
-                    </p>
-           
-                  </div>
+         
                 </div>
               </div>
             ))}

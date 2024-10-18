@@ -7,6 +7,7 @@ import {
 import { lusitana } from '@/app/ui/fonts';
 import { fetchCardData } from '@/app/lib/data';
 import { PlayerStandingsTable } from '@/app/lib/definitions';
+import { PingPongImage } from '../ping-pong-image';
 
 interface PlayerCardWrapperProps {
     player: PlayerStandingsTable
@@ -14,17 +15,28 @@ interface PlayerCardWrapperProps {
 const iconMap = {
     players: UserGroupIcon,
     totalPointsScored: PresentationChartBarIcon,
-    matchesPlayed: ClockIcon,
-    topPlayer: ArrowTrendingUpIcon,
+    skillRating: ArrowTrendingUpIcon,
 };
   
 export default async function PlayerCardWrapper({player}: PlayerCardWrapperProps) {
 
     return (
         <>
+            <div className='flex justify-center lg:block'>
+                {player.profile_picture_url ? (
+                    <PingPongImage 
+                        imageUrl={player.profile_picture_url} 
+                        width={200} 
+                        height={200}
+                        className='bg-center rounded-full'
+                    />
+                    ) : (
+                        <div className="h-64 w-64 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+                )}
+            </div>
             <PlayerCards title="Username" value={player.username} type="players" />
-            <PlayerCards title="Record" value={`${player.wins} - ${player.losses}`} type="matchesPlayed" />
-            <PlayerCards title="Skill Rating" value={player.elo} type="topPlayer" />
+            <PlayerCards title="Record" value={`${player.wins} - ${player.losses}`} type="totalPointsScored" />
+            <PlayerCards title="Skill Rating" value={player.elo} type="skillRating" />
         </>
     );
 }
@@ -36,7 +48,7 @@ export function PlayerCards({
   }: {
     title: string;
     value: number | string;
-    type: 'topPlayer' | 'totalPointsScored' | 'matchesPlayed' | 'players';
+    type: 'skillRating' | 'totalPointsScored' | 'players';
   }) {
     const Icon = iconMap[type];
   

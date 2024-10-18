@@ -29,15 +29,8 @@ export default async function MatchesTable({
         
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
-                  <div>
-                    <p className="text-xl font-medium">
-                    </p>
-                    <p>{formatDateToLocal(match.date)}</p>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    
-                    <DeleteMatch id={match.id} />
-                  </div>
+                  <p className="text-gray-500 dark:text-white pb-2">Date:</p>
+                  <p>{formatDateToLocal(match.date)}</p>
                 </div>
               </div>
             ))}

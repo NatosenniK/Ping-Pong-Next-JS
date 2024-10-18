@@ -27,6 +27,9 @@ export default async function SideNav() {
         <NavLinks />
         <div className="dark:bg-slate-700 hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
         <div className='flex justify-between'>
+          {userObj &&
+            <ProfileButton currentUser={userObj} />
+          }
           <form
             action={async () => {
               'use server';
@@ -38,9 +41,6 @@ export default async function SideNav() {
               <div className="hidden md:block">Sign Out</div>
             </button>
           </form>
-          {userObj &&
-            <ProfileButton currentUser={userObj} />
-          }
         </div>
         
         

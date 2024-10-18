@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { fetchPlayerList } from '@/app/lib/data';
-import { ViewPlayer } from './buttons';
+import { ViewPlayer, ViewPlayerMobileButton } from './buttons';
 import { PingPongImage } from '../ping-pong-image';
 import Link from 'next/link';
 
@@ -23,23 +23,39 @@ export default async function PlayersTable({
                 key={player.id}
                 className="mb-2 w-full rounded-md bg-white p-4 dark:bg-slate-600 dark:text-white"
               >
-                <div className="flex items-center justify-between border-b pb-4">
+                <div className="flex items-center justify-between pb-4">
                   <div className='w-full'>
-                      <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">{player.username}</p><p>Rating: {player.elo}</p></div>
-                      {/* <div className='flex justify-between'><p className="text-gray-500 dark:text-white pb-2">{player.loser_username}</p><p>Score: {player.loser_points}</p></div> */}
+                      
+                      <div className='flex justify-between items-center'>
+                        <div>
+                          <Link href={`/dashboard/players/${player.id}/view`} className='flex items-center gap-3'>
+                            {player.profile_picture_url ? (
+                              <PingPongImage
+                                imageUrl={player.profile_picture_url}
+                                width={40}
+                                height={40}
+                                className='bg-center rounded-full'
+                              />
+                              ) : (
+                                <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-slate-600"></div>
+                            )}
+                            {player.username}
+                          </Link>
+                        </div>
+                        <p>Rating: {player.elo}</p>
+                      </div>
                   </div>
-                  {/* <InvoiceStatus status={match.status} /> */}
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
                     <p className="text-xl font-medium">
-                      {/* {formatCurrency(match.amount)} */}
+                     W/L {player.wins} -  {player.losses}
                     </p>
-                    {/* <p>{formatDateToLocal(player.date)}</p> */}
+              
                   </div>
                   <div className="flex justify-end gap-2">
                     
-                    <ViewPlayer id={player.id} />
+                    <ViewPlayerMobileButton id={player.id} />
                   </div>
                 </div>
               </div>
