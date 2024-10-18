@@ -6,6 +6,9 @@ import {
   DocumentDuplicateIcon,
   ChartBarIcon,
   ClipboardDocumentCheckIcon,
+  ArrowUturnDownIcon,
+  ArrowDownLeftIcon,
+  BarsArrowUpIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -18,8 +21,8 @@ const links = [
   { name: 'Players', href: '/dashboard/players', icon: UserGroupIcon },
   { name: 'Standings', href: '/dashboard/standings', icon: ChartBarIcon },
   { name: 'View All Matches', href: '/dashboard/matches', icon: ClipboardDocumentCheckIcon },
-  { name: 'Enter Match Score', href: '/dashboard/matches/create', icon: ClipboardDocumentCheckIcon },
-  { name: 'Photo Upload', href: '/dashboard/upload-test', icon: ClipboardDocumentCheckIcon },
+  { name: 'Enter Match Score', href: '/dashboard/matches/create', icon: BarsArrowUpIcon },
+  // { name: 'Photo Upload', href: '/dashboard/upload-test', icon: ClipboardDocumentCheckIcon },
 ];
 
 export default function NavLinks() {

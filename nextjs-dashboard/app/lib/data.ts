@@ -213,6 +213,26 @@ export async function fetchMatchesPages(query: string) {
   }
 }
 
+export async function fetchPlayersMatchesPages(id: string) {
+  try {
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM matches
+      JOIN users AS winner ON matches.winner_id = winner.id
+      JOIN users AS loser ON matches.loser_id = loser.id
+      WHERE
+        winner.id = ${id} OR
+        loser.id = ${id}
+    `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of matches for this player.');
+  }
+}
+
 export async function fetchPlayerById(id: string) {
   try {
     const player = await sql<PlayerStandingsTable>` 

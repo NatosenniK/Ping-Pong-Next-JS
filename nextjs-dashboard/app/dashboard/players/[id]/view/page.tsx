@@ -1,10 +1,18 @@
 import Image from 'next/image';
 import Breadcrumbs from '@/app/ui/matches/breadcrumbs';
-import { fetchPlayerById } from '@/app/lib/data';
+import { fetchPlayerById, fetchPlayersMatchesPages } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 import { PingPongImage } from '@/app/ui/ping-pong-image';
+import { PlayerProfile } from '@/app/ui/players/player-profile';
+import { Suspense } from 'react';
+import { MatchesTableSkeleton } from '@/app/ui/skeletons';
+import MatchesTable from '@/app/ui/matches/matches-table';
+import Pagination from '@/app/ui/pagination';
  
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({ params, searchParams }: { params: { id: string }, searchParams?: {
+    query?: string;
+    page?: string;
+  } }) {
     const id = params.id
     const [player] = await Promise.all([
         fetchPlayerById(id),
@@ -12,29 +20,31 @@ export default async function Page({ params }: { params: { id: string } }) {
     if (!player) {
         notFound();
     }
+    const query = searchParams?.query || '';
+    const currentPage = Number(searchParams?.page) || 1;
+    const totalPages = await fetchPlayersMatchesPages(player.id);
     return (
         <main>
-        <Breadcrumbs
-            breadcrumbs={[
-            { label: 'Players', href: '/dashboard/players' },
-            {
-                label: `${player.username}`,
-                href: `/dashboard/players/${id}/view`,
-                active: true,
-            },
-            ]}
-        />
-        {/* <Form invoice={invoice} customers={customers} /> */}
-        {player.profile_picture_url ? (
-            <PingPongImage 
-                imageUrl={player.profile_picture_url} 
-                width={256} 
-                height={256}
-                className='bg-center rounded-full'
+            <Breadcrumbs
+                breadcrumbs={[
+                { label: 'Players', href: '/dashboard/players' },
+                {
+                    label: `${player.username}`,
+                    href: `/dashboard/players/${id}/view`,
+                    active: true,
+                },
+                ]}
             />
-            ) : (
-                <div className="h-64 w-64 rounded-full bg-gray-100 dark:bg-slate-600"></div>
-        )}
+            <PlayerProfile player={player} />
+            <div>
+                <h2 className="ml-2 mb-2 dark:text-white text-xl">Match History</h2>
+            </div>
+            <Suspense key={query + currentPage} fallback={<MatchesTableSkeleton />}>
+                <MatchesTable query={player.username} currentPage={currentPage} />
+            </Suspense>
+            <div className="mt-5 flex w-full justify-center">
+                <Pagination totalPages={totalPages} />
+            </div>
         </main>
     );
 }
