@@ -69,7 +69,7 @@ export default async function StandingsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     <div>
-                      <Link href={`/dashboard/players/${player.id}/view`} className='flex items-center gap-3'>
+                      <Link href={`/dashboard/players/${player.username}/view`} className='flex items-center gap-3'>
                         {player.profile_picture_url ? (
                             <PingPongImage
                               imageUrl={player.profile_picture_url}
