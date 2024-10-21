@@ -28,7 +28,7 @@ export default async function PlayersTable({
                       
                       <div className='flex justify-between items-center'>
                         <div>
-                          <Link href={`/dashboard/players/${player.id}/view`} className='flex items-center gap-3'>
+                          <Link href={`/dashboard/players/${player.username}/view`} className='flex items-center gap-3'>
                             {player.profile_picture_url ? (
                               <PingPongImage
                                 imageUrl={player.profile_picture_url}
@@ -55,7 +55,7 @@ export default async function PlayersTable({
                   </div>
                   <div className="flex justify-end gap-2">
                     
-                    <ViewPlayerMobileButton id={player.id} />
+                    <ViewPlayerMobileButton username={player.username} />
                   </div>
                 </div>
               </div>
@@ -96,7 +96,7 @@ export default async function PlayersTable({
                   <td className="whitespace-nowrap px-3 py-3">
                     
                     <div>
-                      <Link href={`/dashboard/players/${player.id}/view`} className='flex items-center gap-3'>
+                      <Link href={`/dashboard/players/${player.username}/view`} className='flex items-center gap-3'>
                         {player.profile_picture_url ? (
                           <PingPongImage
                             imageUrl={player.profile_picture_url}
@@ -129,7 +129,7 @@ export default async function PlayersTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       {/* <UpdateMatch id={match.id} /> */}
-                      <ViewPlayer id={player.id} />
+                      <ViewPlayer username={player.username} />
                     </div>
                   </td>
                 </tr>

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Breadcrumbs from '@/app/ui/matches/breadcrumbs';
-import { fetchPlayerById, fetchPlayersMatchesPages } from '@/app/lib/data';
+import { fetchPlayerByUsername, fetchPlayersMatchesPages } from '@/app/lib/data';
 import { notFound } from 'next/navigation';
 import { PingPongImage } from '@/app/ui/ping-pong-image';
 import { PlayerProfile } from '@/app/ui/players/player-profile';
@@ -13,9 +13,9 @@ export default async function Page({ params, searchParams }: { params: { id: str
     query?: string;
     page?: string;
   } }) {
-    const id = params.id
+    const username = params.id
     const [player] = await Promise.all([
-        fetchPlayerById(id),
+        fetchPlayerByUsername(username),
     ]);
     if (!player) {
         notFound();
@@ -30,7 +30,7 @@ export default async function Page({ params, searchParams }: { params: { id: str
                 { label: 'Players', href: '/dashboard/players' },
                 {
                     label: `${player.username}`,
-                    href: `/dashboard/players/${id}/view`,
+                    href: `/dashboard/players/${player.username}/view`,
                     active: true,
                 },
                 ]}

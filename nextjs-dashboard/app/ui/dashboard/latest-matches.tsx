@@ -97,7 +97,7 @@ export default async function LatestMatches() {
                     },
                   )}
                 >
-                      <div className="truncate text-sm font-semibold md:text-base dark:text-white flex items-center w-40">
+                      <div className="truncate text-sm font-semibold md:text-base dark:text-white flex items-center w-44">
                         <PingPongImage 
                             imageUrl={latestMatch.winner_profile_picture_url} 
                             width={40} 
@@ -106,10 +106,10 @@ export default async function LatestMatches() {
                         />
                         {latestMatch.winner_username}
                       </div>
-                      <div className='dark:text-white text-center'>
+                      <div className='dark:text-white text-center w-20'>
                         {latestMatch.winner_points} - {latestMatch.loser_points}
                       </div>
-                      <div className="truncate text-sm font-semibold md:text-base dark:text-white flex items-center">
+                      <div className="truncate text-sm font-semibold md:text-base dark:text-white flex items-center w-44 flex justify-end">
                         {latestMatch.loser_username}
                         <PingPongImage 
                             imageUrl={latestMatch.loser_profile_picture_url} 

@@ -288,6 +288,61 @@ export async function fetchPlayerById(id: string) {
   }
 }
 
+export async function fetchPlayerByUsername(username: string) {
+  try {
+    const player = await sql<PlayerStandingsTable>` 
+      SELECT
+        username,
+        id,
+        profile_picture_url,
+        SUM(wins) AS wins,
+        SUM(loss) AS losses,
+        SUM(PF) AS points_for,
+        SUM(PA) AS points_against,
+        elo
+      FROM (
+        (SELECT 
+          users.id AS id,
+          users.username AS username,
+          users.profile_picture_url as profile_picture_url,
+          COUNT(matches.winner_id) AS wins,
+          0 AS loss,
+          SUM(matches.winner_points) AS PF,
+          SUM(matches.loser_points) AS PA,
+          users.elo AS elo
+        FROM users
+        JOIN matches ON matches.winner_id = users.id
+        GROUP BY users.id)
+        
+        UNION ALL
+
+        (SELECT 
+          users.id AS id,
+          users.username AS username,
+          users.profile_picture_url as profile_picture_url,
+          0 AS wins,
+          COUNT(matches.loser_id) AS loss,
+          SUM(matches.loser_points) AS PF,
+          SUM(matches.winner_points) AS PA,
+          users.elo AS elo
+        FROM users
+        JOIN matches ON matches.loser_id = users.id
+        GROUP BY users.id)
+      ) AS t
+      WHERE
+		  username = ${username}
+      GROUP BY username, elo, id, profile_picture_url
+      ORDER BY username DESC
+    `;
+
+
+    return player.rows[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch player.');
+  }
+}
+
 export async function fetchPlayerByEmail(email: string) {
   try {
     const player = await sql<PlayerStandingsTable>` 
