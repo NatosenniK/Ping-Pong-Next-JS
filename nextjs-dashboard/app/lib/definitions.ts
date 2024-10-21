@@ -48,6 +48,18 @@ export type PlayerStandingsTable = {
   elo: number;  
 }
 
+export type UserProfileObject = {
+  username: string;
+  id: string;
+  profile_picture_url: string;
+  email: string;
+  wins: number;
+  losses: number;
+  points_for: number;
+  points_against: number;
+  elo: number;  
+}
+
 export type PlayerField = {
   id: string;
   username: string;

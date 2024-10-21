@@ -9,12 +9,13 @@ interface Breadcrumb {
 }
 
 export default function Breadcrumbs({
-  breadcrumbs,
+  breadcrumbs, button
 }: {
-  breadcrumbs: Breadcrumb[];
+  breadcrumbs: Breadcrumb[],
+  button?: React.ReactNode
 }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-6 block">
+    <nav aria-label="Breadcrumb" className="mb-6 block w-full flex justify-between items-center">
       <ol className={clsx(lusitana.className, 'flex text-xl md:text-2xl')}>
         {breadcrumbs.map((breadcrumb, index) => (
           <li
@@ -31,6 +32,11 @@ export default function Breadcrumbs({
           </li>
         ))}
       </ol>
+      {button && 
+        <div>
+          {button}
+        </div>
+      }
     </nav>
   );
 }

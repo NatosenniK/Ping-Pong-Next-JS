@@ -135,6 +135,21 @@ export async function saveProfilePhoto(email: string, profilePictureUrl: string)
   }
 }
 
+export async function deleteProfilePhoto(email: string) {
+
+  try {
+    await sql`
+      UPDATE users
+      SET profile_picture_url = null
+      WHERE email = ${email}
+    `;
+
+    return null
+  } catch (error) {
+    console.error('Database Error:', error);
+  }
+}
+
 export async function authenticate(
     prevState: string | undefined,
     formData: FormData,

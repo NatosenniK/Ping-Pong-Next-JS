@@ -8,6 +8,7 @@ import { lusitana } from '@/app/ui/fonts';
 import { fetchCardData } from '@/app/lib/data';
 import { PlayerStandingsTable } from '@/app/lib/definitions';
 import { PingPongImage } from '../ping-pong-image';
+import { toast } from 'react-toastify';
 
 interface PlayerCardWrapperProps {
     player: PlayerStandingsTable
@@ -19,7 +20,6 @@ const iconMap = {
 };
   
 export default async function PlayerCardWrapper({player}: PlayerCardWrapperProps) {
-
     return (
         <>
             <div className='flex justify-center lg:block'>

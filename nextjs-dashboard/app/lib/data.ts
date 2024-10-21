@@ -3,6 +3,7 @@ import {
   PlayerField,
   MatchesTable,
   PlayerStandingsTable,
+  UserProfileObject,
 } from './definitions';
 import { DataTypes } from './data.types';
 
@@ -290,11 +291,12 @@ export async function fetchPlayerById(id: string) {
 
 export async function fetchPlayerByUsername(username: string) {
   try {
-    const player = await sql<PlayerStandingsTable>` 
+    const player = await sql<UserProfileObject>` 
       SELECT
         username,
         id,
         profile_picture_url,
+        email,
         SUM(wins) AS wins,
         SUM(loss) AS losses,
         SUM(PF) AS points_for,
@@ -305,6 +307,7 @@ export async function fetchPlayerByUsername(username: string) {
           users.id AS id,
           users.username AS username,
           users.profile_picture_url as profile_picture_url,
+          users.email as email,
           COUNT(matches.winner_id) AS wins,
           0 AS loss,
           SUM(matches.winner_points) AS PF,
@@ -320,6 +323,7 @@ export async function fetchPlayerByUsername(username: string) {
           users.id AS id,
           users.username AS username,
           users.profile_picture_url as profile_picture_url,
+          users.email as email,
           0 AS wins,
           COUNT(matches.loser_id) AS loss,
           SUM(matches.loser_points) AS PF,
@@ -331,7 +335,7 @@ export async function fetchPlayerByUsername(username: string) {
       ) AS t
       WHERE
 		  username = ${username}
-      GROUP BY username, elo, id, profile_picture_url
+      GROUP BY username, elo, id, profile_picture_url, email
       ORDER BY username DESC
     `;
 
