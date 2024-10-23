@@ -15,7 +15,7 @@ export default async function Page({ params, searchParams }: { params: { id: str
     page?: string;
   } }) {
     const session = await auth()
-    const username = params.id
+    const username = decodeURIComponent(params.id);
     
     const [player] = await Promise.all([
         fetchPlayerByUsername(username),
