@@ -1,5 +1,6 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
 import ToastProvider from '../ui/toast-provider';
+import ThemeSwitch from '../ui/theme-switch';
 
 export const experimental_ppr = true;
  
@@ -15,6 +16,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <ToastProvider>
           {children}
         </ToastProvider>
+        
+      </div>
+      <div className='absolute bottom-5 right-5'>
+          <ThemeSwitch />
       </div>
     </div>
   );

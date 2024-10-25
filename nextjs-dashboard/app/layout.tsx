@@ -3,6 +3,8 @@ import { inter } from '@/app/ui/fonts';
 import { Metadata } from 'next';
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
+import { Providers } from './providers';
+import ThemeSwitch from './ui/theme-switch';
 config.autoAddCss = false;
 
 export const metadata: Metadata = {
@@ -20,8 +22,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} antialiased`}>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

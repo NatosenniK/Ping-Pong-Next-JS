@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { lusitana } from './ui/fonts';
 import Image from 'next/image'
 import PingPongLogo from './ui/ping-pong-logo';
+import ThemeSwitch from './ui/theme-switch';
 
 export default function Page() {
   return (
@@ -49,6 +50,9 @@ export default function Page() {
           alt="Screenshots of the dashboard project showing mobile version"
         />
         </div>
+      </div>
+      <div className='absolute bottom-5 right-5'>
+          <ThemeSwitch />
       </div>
     </main>
   );
