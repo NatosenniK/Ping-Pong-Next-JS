@@ -2,7 +2,7 @@
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/standings/standings-table';
 import { CreateMatch } from '@/app/ui/matches/buttons';
-import { lusitana } from '@/app/ui/fonts';
+import { roboto } from '@/app/ui/fonts';
 import { StandingsTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchPlayersPages } from '@/app/lib/data';
@@ -29,7 +29,7 @@ export default async function Page({
   return (
     <div className="w-full">
       <div className="flex w-full items-center justify-between">
-        <h1 className={`${lusitana.className} text-2xl dark:text-white`}>Standings</h1>
+        <h1 className={`${roboto.className} text-2xl dark:text-white`}>Standings</h1>
       </div>
        <Suspense key={query + currentPage} fallback={<StandingsTableSkeleton />}>
         <StandingsTable currentPage={currentPage} />

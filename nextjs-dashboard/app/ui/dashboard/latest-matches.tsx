@@ -1,7 +1,7 @@
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Image from 'next/image';
-import { lusitana } from '@/app/ui/fonts';
+import { roboto } from '@/app/ui/fonts';
 import { fetchLatestMatches } from '@/app/lib/data';
 import { PingPongImage } from '../ping-pong-image';
 export default async function LatestMatches() {
@@ -15,7 +15,7 @@ export default async function LatestMatches() {
 
   return (
     <div className="flex w-full flex-col md:col-span-4">
-      <h2 className={`${lusitana.className} mb-4 text-xl md:text-2xl dark:text-white`}>
+      <h2 className={`${roboto.className} mb-4 text-xl md:text-2xl dark:text-white`}>
         Latest Matches
       </h2>
 

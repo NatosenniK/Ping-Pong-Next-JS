@@ -1,6 +1,6 @@
 import { PlayerStandingsTable } from "@/app/lib/definitions"
 import { PingPongImage } from "../ping-pong-image"
-import { lusitana } from "../fonts";
+import { roboto } from "../fonts";
 import CardWrapper, { Card } from "../dashboard/cards";
 import { ArrowTrendingUpIcon, ClockIcon, PresentationChartBarIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { Suspense } from "react";

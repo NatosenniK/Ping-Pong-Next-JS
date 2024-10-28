@@ -1,6 +1,6 @@
 import { generateYAxis } from '@/app/lib/utils';
 import { CalendarIcon } from '@heroicons/react/24/outline';
-import { lusitana } from '@/app/ui/fonts';
+import { roboto } from '@/app/ui/fonts';
 import { fetchMatches } from '@/app/lib/data';
 import { GroupedMatch, MatchesTable } from '@/app/lib/definitions';
 
@@ -35,7 +35,7 @@ export default async function MatchChart() {
 
   return (
     <div className="w-full md:col-span-4">
-      <h2 className={`${lusitana.className} mb-4 text-xl md:text-2xl dark:text-white`}>
+      <h2 className={`${roboto.className} mb-4 text-xl md:text-2xl dark:text-white`}>
         Matches Played
       </h2>
       <div className="rounded-xl bg-gray-50 p-4 dark:bg-slate-700">

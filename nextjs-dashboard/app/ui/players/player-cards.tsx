@@ -4,7 +4,7 @@ import {
     ArrowTrendingUpIcon,
     PresentationChartBarIcon,
   } from '@heroicons/react/24/outline';
-import { lusitana } from '@/app/ui/fonts';
+import { roboto } from '@/app/ui/fonts';
 import { fetchCardData } from '@/app/lib/data';
 import { PlayerStandingsTable } from '@/app/lib/definitions';
 import { PingPongImage } from '../ping-pong-image';
@@ -59,7 +59,7 @@ export function PlayerCards({
           <h3 className="ml-2 text-sm font-medium dark:text-white">{title}</h3>
         </div>
         <p
-          className={`${lusitana.className}
+          className={`${roboto.className}
             truncate rounded-xl bg-white dark:bg-slate-700 px-4 py-8 text-center text-2xl dark:text-white`}
         >
           {value}
