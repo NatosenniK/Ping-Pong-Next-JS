@@ -51,7 +51,7 @@ export default function Page() {
         />
         </div>
       </div>
-      <div className='absolute bottom-5 right-5'>
+      <div className='absolute bottom-3 right-3'>
           <ThemeSwitch />
       </div>
     </main>

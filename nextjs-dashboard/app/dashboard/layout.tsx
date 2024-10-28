@@ -18,7 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </ToastProvider>
         
       </div>
-      <div className='absolute bottom-5 right-5'>
+      <div className='fixed bottom-3 right-3'>
           <ThemeSwitch />
       </div>
     </div>
