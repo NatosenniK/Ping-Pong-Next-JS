@@ -1,27 +1,33 @@
-import { sql } from '@vercel/postgres';
 import {
   PlayerField,
   MatchesTable,
   PlayerStandingsTable,
   UserProfileObject,
-} from './definitions';
-import { DataTypes } from './data.types';
+} from "./definitions";
+import { DataTypes } from "./data.types";
+import { Pool } from "pg";
 
-export async function fetchMatches() {
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+export async function fetchMatches(): Promise<MatchesTable[]> {
   try {
+    const res = await pool.query("SELECT * FROM matches");
 
-    const data = await sql<MatchesTable>`SELECT * FROM matches`;
-
-    return data.rows;
+    return res.rows as MatchesTable[];
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch match data.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch match data.");
   }
 }
 
-export async function fetchLatestMatches() {
+export async function fetchLatestMatches(): Promise<MatchesTable[]> {
   try {
-    const data = await sql<MatchesTable>`
+    const res = await pool.query(`
       SELECT
         matches.id,
         matches.winner_id,
@@ -41,29 +47,33 @@ export async function fetchLatestMatches() {
       JOIN users AS winner ON matches.winner_id = winner.id
       JOIN users AS loser ON matches.loser_id = loser.id
       ORDER BY matches.date DESC
-      LIMIT 5`;
+      LIMIT 5
+    `);
 
-    return data.rows;
+    return res.rows as MatchesTable[];
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest matches.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch the latest matches.");
   }
 }
 
 export async function fetchCardData(): Promise<DataTypes.CardData> {
   try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
-    const playersCountPromise = sql`SELECT COUNT(*) FROM users`;
-    const matchesCountPromise = sql`SELECT COUNT(*) FROM matches`;
-    const totalPointsScoredPromise = sql`SELECT SUM(winner_points + loser_points) AS total FROM matches`;
-    const topPlayerPromise: Promise<{ rows: DataTypes.CardDataPlayerObject[] }> = sql`SELECT users.id, users.username, COUNT(matches.winner_id) AS wins
+    const playersCountPromise = pool.query("SELECT COUNT(*) FROM users");
+    const matchesCountPromise = pool.query("SELECT COUNT(*) FROM matches");
+    const totalPointsScoredPromise = pool.query(
+      "SELECT SUM(winner_points + loser_points) AS total FROM matches"
+    );
+    const topPlayerPromise: Promise<{
+      rows: DataTypes.CardDataPlayerObject[];
+    }> = pool.query(`
+      SELECT users.id, users.username, COUNT(matches.winner_id) AS wins
       FROM users
       JOIN matches ON users.id = matches.winner_id
       GROUP BY users.id, users.username
       ORDER BY wins DESC
-      LIMIT 1; `;
+      LIMIT 1;
+    `);
 
     const data = await Promise.all([
       playersCountPromise,
@@ -72,10 +82,9 @@ export async function fetchCardData(): Promise<DataTypes.CardData> {
       topPlayerPromise,
     ]);
 
-    
-    const numberOfPlayers = Number(data[0].rows[0].count ?? '0');
-    const numberOfMatches = Number(data[1].rows[0].count ?? '0');
-    const numberOfPoints = Number(data[2].rows[0].total ?? '0');
+    const numberOfPlayers = Number(data[0].rows[0].count ?? "0");
+    const numberOfMatches = Number(data[1].rows[0].count ?? "0");
+    const numberOfPoints = Number(data[2].rows[0].total ?? "0");
     const topPlayer = data[3].rows[0];
 
     return {
@@ -85,20 +94,18 @@ export async function fetchCardData(): Promise<DataTypes.CardData> {
       topPlayer,
     };
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch card data.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch card data.");
   }
 }
 
 const ITEMS_PER_PAGE = 10;
-export async function fetchFilteredMatches(
-  query: string,
-  currentPage: number,
-) {
+export async function fetchFilteredMatches(query: string, currentPage: number) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const matches = await sql<MatchesTable>`
+    const res = await pool.query(
+      `
       SELECT
         matches.id,
         matches.winner_id,
@@ -116,28 +123,30 @@ export async function fetchFilteredMatches(
       JOIN users AS winner ON matches.winner_id = winner.id
       JOIN users AS loser ON matches.loser_id = loser.id
       WHERE
-        winner.name ILIKE ${`%${query}%`} OR
-        winner.username ILIKE ${`%${query}%`} OR
-        loser.name ILIKE ${`%${query}%`} OR
-        loser.username ILIKE ${`%${query}%`}
+        winner.name ILIKE $1 OR
+        winner.username ILIKE $1 OR
+        loser.name ILIKE $1 OR
+        loser.username ILIKE $1
       ORDER BY matches.date DESC
-      LIMIT ${ITEMS_PER_PAGE}
-      OFFSET ${offset}
-    `;
-  
-    return matches.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch matches.');
-  }
+      LIMIT $2
+      OFFSET $3
+    `,
+      [`%${query}%`, ITEMS_PER_PAGE, offset]
+    );
 
+    return res.rows as MatchesTable[];
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch matches.");
+  }
 }
 
-export async function fetchPlayerStandings( currentPage: number) {
+export async function fetchPlayerStandings(currentPage: number) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const standings = await sql<PlayerStandingsTable>` 
+    const res = await pool.query(
+      `
       SELECT
         username,
         profile_picture_url,
@@ -178,65 +187,71 @@ export async function fetchPlayerStandings( currentPage: number) {
       ) AS t
       GROUP BY username, elo, profile_picture_url, id
       ORDER BY wins DESC
-      LIMIT ${ITEMS_PER_PAGE}
-      OFFSET ${offset}
-    `;
+      LIMIT $1
+      OFFSET $2
+    `,
+      [ITEMS_PER_PAGE, offset]
+    );
 
-    return standings.rows;
+    return res.rows as PlayerStandingsTable[];
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch player standings.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch player standings.");
   }
 }
 
-
-
-
 export async function fetchMatchesPages(query: string) {
   try {
-    const count = await sql`
+    const res = await pool.query(
+      `
       SELECT COUNT(*)
       FROM matches
       JOIN users AS winner ON matches.winner_id = winner.id
       JOIN users AS loser ON matches.loser_id = loser.id
       WHERE
-        winner.name ILIKE ${`%${query}%`} OR
-        winner.username ILIKE ${`%${query}%`} OR
-        loser.name ILIKE ${`%${query}%`} OR
-        loser.username ILIKE ${`%${query}%`}
-    `;
+        winner.name ILIKE $1 OR
+        winner.username ILIKE $1 OR
+        loser.name ILIKE $1 OR
+        loser.username ILIKE $1
+    `,
+      [`%${query}%`]
+    );
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(Number(res.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of matches.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of matches.");
   }
 }
 
 export async function fetchPlayersMatchesPages(id: string) {
   try {
-    const count = await sql`
+    const res = await pool.query(
+      `
       SELECT COUNT(*)
       FROM matches
       JOIN users AS winner ON matches.winner_id = winner.id
       JOIN users AS loser ON matches.loser_id = loser.id
       WHERE
-        winner.id = ${id} OR
-        loser.id = ${id}
-    `;
+        winner.id = $1 OR
+        loser.id = $1
+    `,
+      [id]
+    );
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(Number(res.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of matches for this player.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of matches for this player.");
   }
 }
 
 export async function fetchPlayerById(id: string) {
   try {
-    const player = await sql<PlayerStandingsTable>` 
+    const res = await pool.query(
+      `
       SELECT
         username,
         id,
@@ -276,22 +291,24 @@ export async function fetchPlayerById(id: string) {
         GROUP BY users.id)
       ) AS t
       WHERE
-		  id = ${id}
+        id = $1
       GROUP BY username, elo, id, profile_picture_url
       ORDER BY username DESC
-    `;
+    `,
+      [id]
+    );
 
-
-    return player.rows[0];
+    return res.rows[0];
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch player.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch player.");
   }
 }
 
 export async function fetchPlayerByUsername(username: string) {
   try {
-    const player = await sql<UserProfileObject>` 
+    const res = await pool.query(
+      `
       SELECT
         username,
         id,
@@ -334,22 +351,24 @@ export async function fetchPlayerByUsername(username: string) {
         GROUP BY users.id)
       ) AS t
       WHERE
-		  username = ${username}
+        username = $1
       GROUP BY username, elo, id, profile_picture_url, email
       ORDER BY username DESC
-    `;
+    `,
+      [username]
+    );
 
-
-    return player.rows[0];
+    return res.rows[0];
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch player.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch player.");
   }
 }
 
 export async function fetchPlayerByEmail(email: string) {
   try {
-    const player = await sql<PlayerStandingsTable>` 
+    const res = await pool.query(
+      `
       SELECT
         username,
         id,
@@ -392,39 +411,43 @@ export async function fetchPlayerByEmail(email: string) {
         GROUP BY users.id)
       ) AS t
       WHERE
-		  email = ${email}
+        email = $1
       GROUP BY username, elo, id, profile_picture_url, email
       ORDER BY username DESC
-    `;
+    `,
+      [email]
+    );
 
-
-    return player.rows[0];
+    return res.rows[0];
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch player.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch player.");
   }
 }
 
 export async function fetchPlayersPages(query: string) {
   try {
-    const count = await sql`
+    const res = await pool.query(
+      `
       SELECT COUNT(*)
       FROM users
       WHERE
-        users.username ILIKE ${`%${query}%`}
-    `;
+        users.username ILIKE $1
+    `,
+      [`%${query}%`]
+    );
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(Number(res.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of Players.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch total number of Players.");
   }
 }
 
 export async function fetchPlayers() {
   try {
-    const data = await sql<PlayerField>`
+    const res = await pool.query(`
       SELECT
         id,
         username,
@@ -432,13 +455,13 @@ export async function fetchPlayers() {
         elo
       FROM users
       ORDER BY username ASC
-    `;
+    `);
 
-    const players = data.rows;
+    const players = res.rows as PlayerField[];
     return players;
   } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all players.');
+    console.error("Database Error:", err);
+    throw new Error("Failed to fetch all players.");
   }
 }
 
@@ -446,7 +469,8 @@ export async function fetchPlayerList(query: string, currentPage: number) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const standings = await sql<PlayerStandingsTable>` 
+    const res = await pool.query(
+      `
       SELECT
         username,
         id,
@@ -486,18 +510,18 @@ export async function fetchPlayerList(query: string, currentPage: number) {
         GROUP BY users.id)
       ) AS t
       WHERE
-		  username ILIKE ${`%${query}%`}
+        username ILIKE $1
       GROUP BY username, elo, id, profile_picture_url
       ORDER BY username DESC
-      LIMIT ${ITEMS_PER_PAGE}
-      OFFSET ${offset}
-      
-    `;
+      LIMIT $2
+      OFFSET $3
+    `,
+      [`%${query}%`, ITEMS_PER_PAGE, offset]
+    );
 
-    return standings.rows;
+    return res.rows as PlayerStandingsTable[];
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch player standings.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch player standings.");
   }
 }
-
