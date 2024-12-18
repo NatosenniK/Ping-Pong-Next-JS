@@ -1,39 +1,55 @@
-'use client';
+"use client";
 
-import { PlayerField, UserObject } from '@/app/lib/definitions';
-import Link from 'next/link';
-import { AdjustmentsVerticalIcon, UserCircleIcon } from '@heroicons/react/24/outline';
-import { Button } from '@/app/ui/button';
-import { createMatch, State } from '@/app/lib/actions';
-import { useActionState, useEffect, useState } from 'react';
-import { User } from 'next-auth';
+import { PlayerField, UserObject } from "@/app/lib/definitions";
+import Link from "next/link";
+import {
+  AdjustmentsVerticalIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
+import { Button } from "@/app/ui/button";
+import { createMatch, State } from "@/app/lib/actions";
+import { useActionState, useEffect, useState } from "react";
+import { User } from "next-auth";
 
 interface FormProps {
-  players: PlayerField[]
-  currentUser: User
+  players: PlayerField[];
+  currentUser: User;
 }
 export default function Form({ players, currentUser }: FormProps) {
   const initialState: State = { message: null, errors: {} };
-  const [state, formAction] = useActionState<State, FormData>(createMatch, initialState);
-  const [filteredPlayers, setFilteredPlayers] = useState<PlayerField[] | null>(null)
-  const [modifiedUser, setModifiedUser] = useState<PlayerField | null>(null)
-  const [loserCurrentRank, setLoserCurrentRank] = useState<number | null>(null)
-  
+  const [state, formAction] = useActionState<State, FormData>(
+    createMatch,
+    initialState
+  );
+  const [filteredPlayers, setFilteredPlayers] = useState<PlayerField[] | null>(
+    null
+  );
+  const [modifiedUser, setModifiedUser] = useState<PlayerField | null>(null);
+  const [loserCurrentRank, setLoserCurrentRank] = useState<number | null>(null);
+
   useEffect(() => {
-    const playersExceptCurrentUser = players.filter((player) => player.email !== currentUser.email);
-    const currentUserObj = players.filter((player) => player.email == currentUser.email)
-    console.log(currentUserObj)
-    setFilteredPlayers(playersExceptCurrentUser)
-    setModifiedUser(currentUserObj[0])
-  }, [currentUser, players])
+    const playersExceptCurrentUser = players.filter(
+      (player) => player.email !== currentUser.email
+    );
+    const currentUserObj = players.filter(
+      (player) => player.email == currentUser.email
+    );
+
+    setFilteredPlayers(playersExceptCurrentUser);
+    setModifiedUser(currentUserObj[0]);
+  }, [currentUser, players]);
   return (
     <form action={formAction}>
-      <h2 className='ml-2 mb-2 dark:text-white'>How did your match go, {currentUser.name}?</h2>
+      <h2 className="ml-2 mb-2 dark:text-white">
+        How did your match go, {currentUser.name}?
+      </h2>
       <div className="rounded-md bg-gray-50 p-4 md:p-6 dark:bg-slate-700">
-        
-        {modifiedUser &&
+        {modifiedUser && (
           <div className="mb-4">
-            <label htmlFor="winningPlayer" className="mb-2 block text-sm font-medium dark:text-white">
+            <label
+              htmlFor="winningPlayer"
+              className="mb-2 block text-sm font-medium dark:text-white"
+            >
               Winning Player
             </label>
             <div className="relative">
@@ -41,11 +57,11 @@ export default function Form({ players, currentUser }: FormProps) {
                 id="winningPlayer"
                 name="winningPlayerId"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 dark:bg-slate-800 dark:text-white"
-                defaultValue={modifiedUser.id ?? ''}
+                defaultValue={modifiedUser.id ?? ""}
                 aria-describedby="winningPlayer-error"
                 onChange={(e) => {
-                  e.target.value = modifiedUser.id ?? '';
-                  setLoserCurrentRank(modifiedUser.elo)
+                  e.target.value = modifiedUser.id ?? "";
+                  setLoserCurrentRank(modifiedUser.elo);
                 }}
               >
                 <option value="" disabled>
@@ -68,11 +84,13 @@ export default function Form({ players, currentUser }: FormProps) {
                 ))}
             </div>
           </div>
-        }
-        
+        )}
 
         <div className="mb-4">
-          <label htmlFor="winnerPoints" className="mb-2 block text-sm font-medium dark:text-white">
+          <label
+            htmlFor="winnerPoints"
+            className="mb-2 block text-sm font-medium dark:text-white"
+          >
             Winner Score
           </label>
           <div className="relative mt-2 rounded-md">
@@ -100,7 +118,10 @@ export default function Form({ players, currentUser }: FormProps) {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="winnerRank" className="mb-2 block text-sm font-medium dark:text-white">
+          <label
+            htmlFor="winnerRank"
+            className="mb-2 block text-sm font-medium dark:text-white"
+          >
             Winner Current Rank
           </label>
           <div className="relative mt-2 rounded-md">
@@ -118,12 +139,14 @@ export default function Form({ players, currentUser }: FormProps) {
               />
               <AdjustmentsVerticalIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900 dark:text-white" />
             </div>
-
           </div>
         </div>
 
         <div className="mb-4">
-          <label htmlFor="losingPlayer" className="mb-2 block text-sm font-medium dark:text-white">
+          <label
+            htmlFor="losingPlayer"
+            className="mb-2 block text-sm font-medium dark:text-white"
+          >
             Losing Player
           </label>
           <div className="relative">
@@ -134,18 +157,21 @@ export default function Form({ players, currentUser }: FormProps) {
               defaultValue=""
               aria-describedby="losingPlayer-error"
               onChange={(e) => {
-                const losingPlayerObj = players.filter((player) => player.id == e.target.value)
-                setLoserCurrentRank(losingPlayerObj[0].elo)
+                const losingPlayerObj = players.filter(
+                  (player) => player.id == e.target.value
+                );
+                setLoserCurrentRank(losingPlayerObj[0].elo);
               }}
             >
               <option value="" disabled>
                 Select a losing player
               </option>
-              {filteredPlayers && filteredPlayers.map((filteredPlayer) => (
-                <option key={filteredPlayer.id} value={filteredPlayer.id}>
-                  {filteredPlayer.username}
-                </option>
-              ))}
+              {filteredPlayers &&
+                filteredPlayers.map((filteredPlayer) => (
+                  <option key={filteredPlayer.id} value={filteredPlayer.id}>
+                    {filteredPlayer.username}
+                  </option>
+                ))}
             </select>
             <UserCircleIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 dark:text-white" />
           </div>
@@ -160,7 +186,10 @@ export default function Form({ players, currentUser }: FormProps) {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="loserPoints" className="mb-2 block text-sm font-medium dark:text-white">
+          <label
+            htmlFor="loserPoints"
+            className="mb-2 block text-sm font-medium dark:text-white"
+          >
             Loser Score
           </label>
           <div className="relative mt-2 rounded-md">
@@ -188,7 +217,10 @@ export default function Form({ players, currentUser }: FormProps) {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="loserRank" className="mb-2 block text-sm font-medium dark:text-white">
+          <label
+            htmlFor="loserRank"
+            className="mb-2 block text-sm font-medium dark:text-white"
+          >
             Loser Current Rank
           </label>
           <div className="relative mt-2 rounded-md">
@@ -206,7 +238,6 @@ export default function Form({ players, currentUser }: FormProps) {
               />
               <AdjustmentsVerticalIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900 dark:text-white" />
             </div>
-
           </div>
         </div>
 
